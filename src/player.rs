@@ -1,8 +1,8 @@
 use vector2::Vector2;
 
 pub enum PlayerSide {
-    Left,
-    Right
+    Left = 0,
+    Right = 1
 }
 
 pub struct Player {
