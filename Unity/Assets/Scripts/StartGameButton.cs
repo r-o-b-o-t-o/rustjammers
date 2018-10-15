@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class StartGame : MonoBehaviour
+public class StartGameButton : MonoBehaviour
 {
 	public Button m_YourFirstButton;
 	// Use this for initialization
