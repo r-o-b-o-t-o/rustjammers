@@ -36,10 +36,10 @@ public class GameViewManagerScript : MonoBehaviour
 	private ManagedState MState;
 	
 	[DllImport("rustjammers_engine")]
-	static extern void send_type_p1(sbyte type1);
+	static extern void send_type_p1(IntPtr gameEngine,sbyte type1);
 	
 	[DllImport("rustjammers_engine")]
-	static extern void send_type_p2(sbyte type2);
+	static extern void send_type_p2(IntPtr gameEngine,sbyte type2);
 	
 	[DllImport("rustjammers_engine")]
 	static extern IntPtr initialize();
@@ -67,8 +67,8 @@ public class GameViewManagerScript : MonoBehaviour
 		currentGameEngine = initialize();
 		reset(currentGameEngine);
 		MState =new ManagedState();
-		send_type_p1(PlayerType.MyPlayersType.typeP1);
-		send_type_p2(PlayerType.MyPlayersType.typeP2);
+		send_type_p1(currentGameEngine,PlayerType.MyPlayersType.typeP1);
+		send_type_p2(currentGameEngine,PlayerType.MyPlayersType.typeP2);
 	}
 	
 	void Update ()
