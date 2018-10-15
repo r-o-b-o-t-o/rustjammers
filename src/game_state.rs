@@ -1,5 +1,5 @@
-use player::Player;
 use frisbee::Frisbee;
+use player::{ Player, PlayerSide };
 
 use std::mem::transmute;
 
@@ -33,23 +33,25 @@ impl GameState {
         let _state: Box<Self> = unsafe { transmute(ptr) };
     }
 
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             p1:      Player::new(),
             p2:      Player::new(),
             frisbee: Frisbee::new()
         }
     }
-    
+
     #[no_mangle]
     pub extern fn reset(&mut self) {
         self.p1.pos.x = -10.0;
         self.p1.pos.y = 0.0;
         self.p1.score = 0;
+        self.p1.side = Some(PlayerSide::Left);
         
         self.p2.pos.x = 10.0;
         self.p2.pos.y = 0.0;
         self.p2.score = 0;
+        self.p2.side = Some(PlayerSide::Right);
 
         self.frisbee.pos.x = 0.0;
         self.frisbee.pos.y = 0.0;
