@@ -30,8 +30,8 @@ impl GameEngine {
                 Player::new(),
             ),
             agents: (
-                Some(Self::create_agent_from_type(AgentType::Random)),
-                Some(Self::create_agent_from_type(AgentType::Random)),
+                None,
+                None,
             ),
             frisbee: Frisbee::new()
         }
@@ -69,12 +69,12 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn send_type_p1(&mut self, agent_type: i8) {
-        self.agents.0 = Some(Self::match_agent(::agent::agent_type_from_i8(agent_type)));
+        self.agents.0 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type)));
     }
 
     #[no_mangle]
     pub extern fn send_type_p2(&mut self, agent_type: i8) {
-        self.agents.1 = Some(Self::match_agent(::agent::agent_type_from_i8(agent_type)));
+        self.agents.1 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type)));
     }
 
     #[no_mangle]
