@@ -42,7 +42,7 @@ impl SharedData {
         engine.p1.pos.y = self.p1_y;
         engine.p1.score = self.p1_score;
         engine.p1.side = Some(PlayerSide::Left);
-        
+
         engine.p2.pos.x = self.p2_x;
         engine.p2.pos.y = self.p2_y;
         engine.p2.score = self.p2_score;

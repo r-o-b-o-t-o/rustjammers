@@ -65,7 +65,7 @@ impl GameEngine {
     }
 
     pub fn step(&mut self, p1_action: Intent, p2_action: Intent) {
-        //faire les action et a la fin renvoyer les positions des players et du frisbee
+        // Faire les action et a la fin renvoyer les positions des players et du frisbee
     }
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {
@@ -73,7 +73,7 @@ impl GameEngine {
         shared.p1_y = self.p1.pos.y;
         shared.p1_score = self.p1.score;
         shared.p1_side = 0;
-        
+
         shared.p2_x = self.p2.pos.x;
         shared.p2_y = self.p2.pos.y;
         shared.p2_score = self.p2.score;

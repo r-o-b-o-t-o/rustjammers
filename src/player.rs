@@ -1,6 +1,6 @@
 use vector2::Vector2;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum PlayerSide {
     Left = 0,
     Right = 1
