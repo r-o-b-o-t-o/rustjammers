@@ -1,6 +1,8 @@
 use vector2::Vector2;
 use player::PlayerSide;
 
+use rand::Rng;
+
 pub struct Frisbee {
     pub pos:            Vector2,
     pub direction:      Vector2,
@@ -12,6 +14,15 @@ pub enum ThrowDirection {
     Up = 0,
     Middle,
     Down,
+}
+
+pub fn random_throw_direction() -> ThrowDirection {
+    let mut rng = ::rand::thread_rng();
+    match rng.gen_range(0, 3) {
+        0 => ThrowDirection::Up,
+        1 => ThrowDirection::Middle,
+        _ => ThrowDirection::Down,
+    }
 }
 
 impl Frisbee {

@@ -1,3 +1,5 @@
+extern crate rand;
+
 mod agent;
 mod player;
 mod frisbee;
