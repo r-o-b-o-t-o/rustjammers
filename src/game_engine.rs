@@ -54,12 +54,12 @@ impl GameEngine {
     
     }
 
-    /*#[no_mangle]
+    #[no_mangle]
     pub extern fn get_state(&mut self) -> SharedData {
-        let test: SharedData;
-        game_state = self.to_shared_data(test);
-        game_state
-    }*/
+        let mut data = SharedData::new();
+        self.to_shared_data(&mut data);
+        data
+    }
 
     pub fn to_shared_data(&self, shared_data: &mut SharedData) {
         shared_data.p1_x = self.p1.pos.x;

@@ -26,6 +26,26 @@ impl SharedData {
         
     }
 
+    pub fn new() -> Self {
+        Self {
+            p1_x:       0.0,
+            p1_y:       0.0,
+            p1_score:   0,
+            p1_side:    0,
+
+            p2_x:       0.0,
+            p2_y:       0.0,
+            p2_score:   0,
+            p2_side:    0,
+
+            zbee_x:     0.0,
+            zbee_y:     0.0,
+            zbee_dir_x: 0.0,
+            zbee_dir_y: 0.0,
+            zbee_speed: 0.0,
+        }
+    }
+
     pub fn to_game_engine(self, game_engine: &mut GameEngine) {
         game_engine.p1.pos.x = self.p1_x;
         game_engine.p1.pos.y = self.p1_y;
