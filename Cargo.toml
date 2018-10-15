@@ -12,3 +12,4 @@ name = "rustjammers_engine"
 crate-type = ["dylib"]
 
 [dependencies]
+rand = "0.5.5"
