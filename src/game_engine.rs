@@ -1,28 +1,16 @@
-use agent::{ Intent, AgentType, Agent, RandomAgent };
 use frisbee::Frisbee;
 use shared_data::SharedData;
 use player::{ Player, PlayerSide };
+use agent::{ Intent, AgentType, Agent, RandomAgent };
 
 use std::mem::transmute;
 
-#[derive(Clone)]
 pub struct GameEngine {
     pub p1:      Player,
     pub p2:      Player,
-    pub action_type: (AgentType, AgentType),
-    pub action: (Box<Agent>, Box<Agent>),
+    pub a1:      Option<Box<Agent>>,
+    pub a2:      Option<Box<Agent>>,
     pub frisbee: Frisbee,
-}
-
-pub fn match_agent(agent_type: AgentType) -> Box<Agent> {
-
-    match agent_type {
-        AgentType::Random => Box::new(RandomAgent{}),
-        AgentType::HumanPlayer => Box::new(RandomAgent{}),
-        AgentType::RandomRollout => Box::new(RandomAgent{}),
-        AgentType::Dijkstra => Box::new(RandomAgent{}),
-        AgentType::TabularQLearning => Box::new(RandomAgent{}),
-    }
 }
 
 impl GameEngine {
@@ -40,9 +28,19 @@ impl GameEngine {
         Self {
             p1:      Player::new(),
             p2:      Player::new(),
-            action_type: (AgentType::Random, AgentType::Random),
-            action: (match_agent(AgentType::Random), match_agent(AgentType::Random)),
+            a1:      Some(Self::match_agent(AgentType::Random)),
+            a2:      Some(Self::match_agent(AgentType::Random)),
             frisbee: Frisbee::new()
+        }
+    }
+
+    pub fn match_agent(agent_type: AgentType) -> Box<Agent> {
+        match agent_type {
+            AgentType::Random => Box::new(RandomAgent{}),
+            AgentType::HumanPlayer => Box::new(RandomAgent{}),
+            AgentType::RandomRollout => Box::new(RandomAgent{}),
+            AgentType::Dijkstra => Box::new(RandomAgent{}),
+            AgentType::TabularQLearning => Box::new(RandomAgent{}),
         }
     }
 
@@ -52,7 +50,7 @@ impl GameEngine {
         self.p1.pos.y = 0.0;
         self.p1.score = 0;
         self.p1.side = Some(PlayerSide::Left);
-        
+
         self.p2.pos.x = 9.0;
         self.p2.pos.y = 0.0;
         self.p2.score = 0;
@@ -67,11 +65,14 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn epoch(&mut self) {
-        //let (mut agent1, mut agent2) = self.action.0.act(PlayerSide::Left, self);
-        // let test = self.action.0.act(PlayerSide::Left, self);
-        let cloneEngine = self.clone();
-        let action_p1 = self.action.0.act(PlayerSide::Left, self);
-        let action_p2 = self.action.1.act(PlayerSide::Left, self);
+        let mut a1 = self.a1.take().unwrap();
+        let mut a2 = self.a2.take().unwrap();
+
+        let action_p1 = a1.act(PlayerSide::Left, self);
+        let action_p2 = a2.act(PlayerSide::Left, self);
+
+        self.a1 = Some(a1);
+        self.a2 = Some(a2);
 
         self.step(action_p1, action_p2);
     }

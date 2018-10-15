@@ -4,7 +4,6 @@ use game_engine::GameEngine;
 
 use rand::Rng;
 
-#[derive(Clone)]
 pub enum AgentType {
     Random = 0,
     HumanPlayer,
@@ -13,7 +12,6 @@ pub enum AgentType {
     TabularQLearning
 }
 
-#[derive(Clone)]
 pub enum Intent {
     None,
     Move(Vector2),
@@ -35,7 +33,6 @@ pub trait Agent {
     }
 }
 
-#[derive(Clone, Copy)]
 pub struct RandomAgent {}
 
 impl Agent for RandomAgent {
