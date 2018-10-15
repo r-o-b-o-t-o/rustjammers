@@ -15,8 +15,8 @@ public class PlayerType : MonoBehaviour
 	 */
 
 	public static PlayerType MyPlayersType;
-	public int typeP1= 0;
-	public int typeP2= 1;
+	public sbyte typeP1= 0;
+	public sbyte typeP2= 1;
 	public Text typeP1txt;
 	public Text typeP2txt;
 	

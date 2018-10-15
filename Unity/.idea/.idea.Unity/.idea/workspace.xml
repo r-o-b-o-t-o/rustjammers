@@ -11,36 +11,36 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="GameViewManagerScript.cs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GameViewManagerScript.cs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/Main/GameViewManagerScript.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+            <state relative-caret-position="207">
+              <caret line="38" column="41" lean-forward="false" selection-start-line="38" selection-start-column="41" selection-end-line="38" selection-end-column="41" />
               <folding>
-                <marker date="1539638331498" expanded="true" signature="17:103" ph="..." />
-                <marker date="1539638331498" expanded="true" signature="156:2422" ph="{...}" />
-                <marker date="1539638331498" expanded="true" signature="373:567" ph="{...}" />
-                <marker date="1539638331498" expanded="true" signature="1185:1282" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
-                <marker date="1539638331498" expanded="true" signature="1336:1534" ph="{...}" />
-                <marker date="1539638331498" expanded="true" signature="1552:2356" ph="{...}" />
-                <marker date="1539638331498" expanded="true" signature="2032:2353" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
-                <marker date="1539638331498" expanded="true" signature="2384:2420" ph="{...}" />
+                <marker date="1539642643051" expanded="false" signature="17:103" ph="..." />
+                <marker date="1539642643051" expanded="true" signature="156:2426" ph="{...}" />
+                <marker date="1539642643051" expanded="true" signature="373:567" ph="{...}" />
+                <marker date="1539642643051" expanded="true" signature="1189:1286" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
+                <marker date="1539642643051" expanded="true" signature="1340:1538" ph="{...}" />
+                <marker date="1539642643051" expanded="true" signature="1556:2360" ph="{...}" />
+                <marker date="1539642643051" expanded="true" signature="2036:2357" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
+                <marker date="1539642643051" expanded="true" signature="2388:2424" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlayerType.cs" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PlayerType.cs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/Menu/PlayerType.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="19" column="26" lean-forward="false" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
+            <state relative-caret-position="315">
+              <caret line="18" column="16" lean-forward="false" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
               <folding>
-                <marker date="1539636854506" expanded="false" signature="7:56" ph="..." />
-                <marker date="1539636854506" expanded="true" signature="106:423" ph="{...}" />
-                <marker date="1539636854506" expanded="true" signature="111:176" ph="/* Random ... */" />
-                <marker date="1539636854506" expanded="true" signature="329:359" ph="{...}" />
-                <marker date="1539636854506" expanded="true" signature="412:421" ph="{...}" />
+                <marker date="1539642643139" expanded="false" signature="7:56" ph="..." />
+                <marker date="1539642643139" expanded="true" signature="106:427" ph="{...}" />
+                <marker date="1539642643139" expanded="true" signature="111:176" ph="/* Random ... */" />
+                <marker date="1539642643139" expanded="true" signature="333:363" ph="{...}" />
+                <marker date="1539642643139" expanded="true" signature="416:425" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -113,14 +113,9 @@
       <file leaf-file-name="StartGame.cs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/Menu/buttons/StartGame.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
+            <state relative-caret-position="357">
               <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-              <folding>
-                <marker date="1539636854509" expanded="false" signature="6:173" ph="..." />
-                <marker date="1539636854509" expanded="true" signature="222:500" ph="{...}" />
-                <marker date="1539636854509" expanded="true" signature="295:388" ph="{...}" />
-                <marker date="1539636854509" expanded="true" signature="411:497" ph="{...}" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -154,9 +149,9 @@
         <option value="$PROJECT_DIR$/Assets/scripts/Main/GameViewManagerScript.cs" />
         <option value="$PROJECT_DIR$/Assets/scripts/Menu/PlayerType.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/StartGame.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Menu/PlayerType.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Menu/buttons/StartGame.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Main/GameViewManagerScript.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Menu/PlayerType.cs" />
       </list>
     </option>
   </component>
@@ -186,6 +181,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="SolutionExplorer">
         <subPane>
           <expand>
@@ -193,18 +189,12 @@
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
               <item name="Unity (2 projects)" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
-            <path>
-              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Unity (2 projects)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="Assembly-CSharp" type="977d5f41:SolutionExplorerNodeRider" />
-            </path>
           </expand>
           <select />
         </subPane>
         <option name="show-file-system" value="false" />
         <option name="show-all-items" value="false" />
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -244,11 +234,12 @@
       <workItem from="1539632558358" duration="129000" />
       <workItem from="1539636159373" duration="624000" />
       <workItem from="1539637481436" duration="848000" />
+      <workItem from="1539642608149" duration="36000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11021000" />
+    <option name="totallyTimeSpent" value="11057000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -302,14 +293,14 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1539638331498" expanded="true" signature="17:103" ph="..." />
-            <marker date="1539638331498" expanded="true" signature="156:2422" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="373:567" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="1185:1282" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
-            <marker date="1539638331498" expanded="true" signature="1336:1534" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="1552:2356" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="2032:2353" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
-            <marker date="1539638331498" expanded="true" signature="2384:2420" ph="{...}" />
+            <marker date="1539642643051" expanded="false" signature="17:103" ph="..." />
+            <marker date="1539642643051" expanded="true" signature="156:2426" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="373:567" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="1189:1286" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
+            <marker date="1539642643051" expanded="true" signature="1340:1538" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="1556:2360" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="2036:2357" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
+            <marker date="1539642643051" expanded="true" signature="2388:2424" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -390,12 +381,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="5" column="9" lean-forward="false" selection-start-line="5" selection-start-column="9" selection-end-line="5" selection-end-column="9" />
-          <folding>
-            <marker date="1539636854509" expanded="false" signature="6:173" ph="..." />
-            <marker date="1539636854509" expanded="true" signature="222:500" ph="{...}" />
-            <marker date="1539636854509" expanded="true" signature="295:388" ph="{...}" />
-            <marker date="1539636854509" expanded="true" signature="411:497" ph="{...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -404,11 +390,11 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1539636854506" expanded="false" signature="7:56" ph="..." />
-            <marker date="1539636854506" expanded="true" signature="106:423" ph="{...}" />
-            <marker date="1539636854506" expanded="true" signature="111:176" ph="/* Random ... */" />
-            <marker date="1539636854506" expanded="true" signature="329:359" ph="{...}" />
-            <marker date="1539636854506" expanded="true" signature="412:421" ph="{...}" />
+            <marker date="1539642643139" expanded="false" signature="7:56" ph="..." />
+            <marker date="1539642643139" expanded="true" signature="106:427" ph="{...}" />
+            <marker date="1539642643139" expanded="true" signature="111:176" ph="/* Random ... */" />
+            <marker date="1539642643139" expanded="true" signature="333:363" ph="{...}" />
+            <marker date="1539642643139" expanded="true" signature="416:425" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -418,14 +404,14 @@
         <state relative-caret-position="585">
           <caret line="64" column="0" lean-forward="false" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
           <folding>
-            <marker date="1539638331498" expanded="true" signature="17:103" ph="..." />
-            <marker date="1539638331498" expanded="true" signature="156:2422" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="373:567" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="1185:1282" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
-            <marker date="1539638331498" expanded="true" signature="1336:1534" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="1552:2356" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="2032:2353" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
-            <marker date="1539638331498" expanded="true" signature="2384:2420" ph="{...}" />
+            <marker date="1539642643051" expanded="false" signature="17:103" ph="..." />
+            <marker date="1539642643051" expanded="true" signature="156:2426" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="373:567" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="1189:1286" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
+            <marker date="1539642643051" expanded="true" signature="1340:1538" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="1556:2360" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="2036:2357" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
+            <marker date="1539642643051" expanded="true" signature="2388:2424" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -436,14 +422,14 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1539638331498" expanded="true" signature="17:103" ph="..." />
-            <marker date="1539638331498" expanded="true" signature="156:2422" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="373:567" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="1185:1282" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
-            <marker date="1539638331498" expanded="true" signature="1336:1534" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="1552:2356" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="2032:2353" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
-            <marker date="1539638331498" expanded="true" signature="2384:2420" ph="{...}" />
+            <marker date="1539642643051" expanded="false" signature="17:103" ph="..." />
+            <marker date="1539642643051" expanded="true" signature="156:2426" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="373:567" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="1189:1286" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
+            <marker date="1539642643051" expanded="true" signature="1340:1538" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="1556:2360" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="2036:2357" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
+            <marker date="1539642643051" expanded="true" signature="2388:2424" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -495,14 +481,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Menu/buttons/StartGame.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
+        <state relative-caret-position="357">
           <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding>
-            <marker date="1539636854509" expanded="false" signature="6:173" ph="..." />
-            <marker date="1539636854509" expanded="true" signature="222:500" ph="{...}" />
-            <marker date="1539636854509" expanded="true" signature="295:388" ph="{...}" />
-            <marker date="1539636854509" expanded="true" signature="411:497" ph="{...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -534,33 +515,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Menu/PlayerType.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Main/GameViewManagerScript.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="19" column="26" lean-forward="false" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
+        <state relative-caret-position="207">
+          <caret line="38" column="41" lean-forward="false" selection-start-line="38" selection-start-column="41" selection-end-line="38" selection-end-column="41" />
           <folding>
-            <marker date="1539636854506" expanded="false" signature="7:56" ph="..." />
-            <marker date="1539636854506" expanded="true" signature="106:423" ph="{...}" />
-            <marker date="1539636854506" expanded="true" signature="111:176" ph="/* Random ... */" />
-            <marker date="1539636854506" expanded="true" signature="329:359" ph="{...}" />
-            <marker date="1539636854506" expanded="true" signature="412:421" ph="{...}" />
+            <marker date="1539642643051" expanded="false" signature="17:103" ph="..." />
+            <marker date="1539642643051" expanded="true" signature="156:2426" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="373:567" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="1189:1286" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
+            <marker date="1539642643051" expanded="true" signature="1340:1538" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="1556:2360" ph="{...}" />
+            <marker date="1539642643051" expanded="true" signature="2036:2357" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
+            <marker date="1539642643051" expanded="true" signature="2388:2424" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Main/GameViewManagerScript.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Menu/PlayerType.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+        <state relative-caret-position="315">
+          <caret line="18" column="16" lean-forward="false" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
           <folding>
-            <marker date="1539638331498" expanded="true" signature="17:103" ph="..." />
-            <marker date="1539638331498" expanded="true" signature="156:2422" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="373:567" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="1185:1282" ph="/* [DllImport(&quot;rustjammers_engine&quot;)] ... */" />
-            <marker date="1539638331498" expanded="true" signature="1336:1534" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="1552:2356" ph="{...}" />
-            <marker date="1539638331498" expanded="true" signature="2032:2353" ph="/* if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0) ... */" />
-            <marker date="1539638331498" expanded="true" signature="2384:2420" ph="{...}" />
+            <marker date="1539642643139" expanded="false" signature="7:56" ph="..." />
+            <marker date="1539642643139" expanded="true" signature="106:427" ph="{...}" />
+            <marker date="1539642643139" expanded="true" signature="111:176" ph="/* Random ... */" />
+            <marker date="1539642643139" expanded="true" signature="333:363" ph="{...}" />
+            <marker date="1539642643139" expanded="true" signature="416:425" ph="{...}" />
           </folding>
         </state>
       </provider>
