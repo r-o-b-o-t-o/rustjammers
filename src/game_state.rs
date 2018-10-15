@@ -40,4 +40,21 @@ impl GameState {
             frisbee: Frisbee::new()
         }
     }
+    
+    #[no_mangle]
+    pub extern fn reset(&mut self) {
+        self.p1.pos.x = -10.0;
+        self.p1.pos.y = 0.0;
+        self.p1.score = 0;
+        
+        self.p2.pos.x = 10.0;
+        self.p2.pos.y = 0.0;
+        self.p2.score = 0;
+
+        self.frisbee.pos.x = 0.0;
+        self.frisbee.pos.y = 0.0;
+        self.frisbee.direction.x = 0.0;
+        self.frisbee.direction.y = 0.0;
+        self.frisbee.speed = 0.0;
+    }
 }
