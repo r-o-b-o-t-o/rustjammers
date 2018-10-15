@@ -36,10 +36,10 @@ public class GameViewManagerScript : MonoBehaviour
 	private ManagedState MState;
 	
 	[DllImport("rustjammers_engine")]
-	static extern void sendtypeP1(int type1);
+	static extern void send_type_P1(int type1);
 	
 	[DllImport("rustjammers_engine")]
-	static extern void sendtypeP2(int type2);
+	static extern void send_type_P2(int type2);
 	
 	[DllImport("rustjammers_engine")]
 	static extern IntPtr initialize();
@@ -55,6 +55,9 @@ public class GameViewManagerScript : MonoBehaviour
 	
 	[DllImport("rustjammers_engine")]
 	static extern void dispose(IntPtr gameEngine);
+	
+	//[DllImport("rustjammers_engine")]
+	//static extern void sendInput(double x,double y,bool dash);
 
 	private IntPtr currentGameEngine;
 	
@@ -64,12 +67,13 @@ public class GameViewManagerScript : MonoBehaviour
 		currentGameEngine = initialize();
 		reset(currentGameEngine);
 		MState =new ManagedState();
-		sendtypeP1(PlayerType.MyPlayersType.typeP1);
-		sendtypeP2(PlayerType.MyPlayersType.typeP2);
+		send_type_P1(PlayerType.MyPlayersType.typeP1);
+		send_type_P2(PlayerType.MyPlayersType.typeP2);
 	}
 	
-	void Update () {
-		
+	void Update ()
+	{
+		bool dashed = false;
 		epoch(currentGameEngine);
 		MState = get_state(currentGameEngine);
 		P1Score.text = ""+MState.p1_score;
@@ -77,7 +81,18 @@ public class GameViewManagerScript : MonoBehaviour
 		P1Transform.position = new Vector3((float)MState.p1_x, P1Transform.position.y,(float)MState.p1_y);
 		P2Transform.position = new Vector3((float)MState.p2_x, P2Transform.position.y,(float)MState.p2_y);
 		ZbeeTransform.position = new Vector3((float)MState.zbee_x, P2Transform.position.y,(float)MState.zbee_y);
-		
+	/*
+		if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0)
+		{
+			double moveHorizontal = Input.GetAxis ("Horizontal");
+			double moveVertical = Input.GetAxis ("Vertical");
+			if (Input.GetKeyDown("space"))
+			{
+				dashed = true;
+			}
+			sendInput(moveHorizontal,moveVertical,dashed);
+		}
+	*/
 	}
 
 
