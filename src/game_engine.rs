@@ -51,7 +51,10 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn epoch(&mut self) {
-        
+        let action_p1 = Intent::Throw(::frisbee::ThrowDirection::Middle);
+        let action_p2 = Intent::Throw(::frisbee::ThrowDirection::Middle);
+
+        self.step(action_p1, action_p2);
     }
 
     #[no_mangle]
@@ -62,7 +65,7 @@ impl GameEngine {
     }
 
     pub fn step(&mut self, p1_action: Intent, p2_action: Intent) {
-        
+        //faire les action et a la fin renvoyer les positions des players et du frisbee
     }
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {
