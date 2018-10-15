@@ -14,7 +14,19 @@
           </e>
         </e>
         <e p="scripts" t="Include">
-          <e p="StartGame.cs" t="Include" />
+          <e p="Main" t="Include">
+            <e p="GameViewManagerScript.cs" t="Include" />
+          </e>
+          <e p="Menu" t="Include">
+            <e p="buttons" t="Include">
+              <e p="P1Humain.cs" t="Include" />
+              <e p="P1Random.cs" t="Include" />
+              <e p="P2Human.cs" t="Include" />
+              <e p="P2Random.cs" t="Include" />
+              <e p="StartGame.cs" t="Include" />
+            </e>
+            <e p="PlayerType.cs" t="Include" />
+          </e>
         </e>
       </e>
       <e p="Library" t="ExcludeRecursive" />
