@@ -35,19 +35,25 @@ public class GameViewManagerScript : MonoBehaviour
 
 	private ManagedState MState;
 	
-	[DllImport("MyGameEngineInCpp")]
+	[DllImport("rustjammers_engine")]
+	static extern void sendtypeP1(int type1);
+	
+	[DllImport("rustjammers_engine")]
+	static extern void sendtypeP2(int type2);
+	
+	[DllImport("rustjammers_engine")]
 	static extern IntPtr initialize();
 	
-	[DllImport("MyGameEngineInCpp")]
+	[DllImport("rustjammers_engine")]
 	static extern void epoch(IntPtr gameEngine);
 	
-	[DllImport("MyGameEngineInCpp")]
-	static extern ManagedState get_State(IntPtr gameEngine);
+	[DllImport("rustjammers_engine")]
+	static extern ManagedState get_state(IntPtr gameEngine);
 	
-	[DllImport("MyGameEngineInCpp")]
+	[DllImport("rustjammers_engine")]
 	static extern void reset(IntPtr gameEngine);
 	
-	[DllImport("MyGameEngineInCpp")]
+	[DllImport("rustjammers_engine")]
 	static extern void dispose(IntPtr gameEngine);
 
 	private IntPtr currentGameEngine;
@@ -58,12 +64,14 @@ public class GameViewManagerScript : MonoBehaviour
 		currentGameEngine = initialize();
 		reset(currentGameEngine);
 		MState =new ManagedState();
+		sendtypeP1(PlayerType.MyPlayersType.typeP1);
+		sendtypeP2(PlayerType.MyPlayersType.typeP2);
 	}
 	
 	void Update () {
 		
 		epoch(currentGameEngine);
-		MState = get_State(currentGameEngine);
+		MState = get_state(currentGameEngine);
 		P1Score.text = ""+MState.p1_score;
 		P2Score.text = ""+MState.p2_score;
 		P1Transform.position = new Vector3((float)MState.p1_x, P1Transform.position.y,(float)MState.p1_y);

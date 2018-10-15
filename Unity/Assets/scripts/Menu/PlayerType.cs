@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 using UnityEngine;
 using UnityEngine.UI;
 //Esteban
@@ -22,10 +24,10 @@ public class PlayerType : MonoBehaviour
 	{
 		MyPlayersType = this;
 	}
-	
+
 	// Update is called once per frame
 	void Update ()
 	{
-
+		
 	}
 }

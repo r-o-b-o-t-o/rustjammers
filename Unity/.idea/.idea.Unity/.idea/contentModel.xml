@@ -26,8 +26,8 @@
               <e p="StartGame.cs" t="Include" />
             </e>
             <e p="PlayerType.cs" t="Include" />
+            <e p="StartGameButton.cs" t="Include" />
           </e>
-          <e p="StartGame.cs" t="Include" />
         </e>
       </e>
       <e p="Library" t="ExcludeRecursive" />

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,6 +20,7 @@ public class StartGame : MonoBehaviour
 	void TaskOnClick()
 	{
 		Debug.Log("You have clicked the button!");
+
 		SceneManager.LoadScene("Main");
 	}
 
