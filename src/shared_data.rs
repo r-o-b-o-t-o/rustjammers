@@ -38,15 +38,15 @@ impl SharedData {
     }
 
     pub fn to_game_engine(self, engine: &mut GameEngine) {
-        engine.p1.pos.x = self.p1_x;
-        engine.p1.pos.y = self.p1_y;
-        engine.p1.score = self.p1_score;
-        engine.p1.side = Some(PlayerSide::Left);
+        engine.players.0.pos.x = self.p1_x;
+        engine.players.0.pos.y = self.p1_y;
+        engine.players.0.score = self.p1_score;
+        engine.players.0.side = Some(PlayerSide::Left);
 
-        engine.p2.pos.x = self.p2_x;
-        engine.p2.pos.y = self.p2_y;
-        engine.p2.score = self.p2_score;
-        engine.p2.side = Some(PlayerSide::Right);
+        engine.players.1.pos.x = self.p2_x;
+        engine.players.1.pos.y = self.p2_y;
+        engine.players.1.score = self.p2_score;
+        engine.players.1.side = Some(PlayerSide::Right);
 
         engine.frisbee.pos.x = self.zbee_x;
         engine.frisbee.pos.y = self.zbee_y;

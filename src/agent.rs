@@ -86,3 +86,35 @@ impl Agent for RandomAgent {
         Intent::None
     }
 }
+
+pub struct HumanPlayerAgent {}
+
+impl Agent for HumanPlayerAgent {
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+        Intent::None
+    }
+}
+
+pub struct RandomRolloutAgent {}
+
+impl Agent for RandomRolloutAgent {
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+        Intent::None
+    }
+}
+
+pub struct DijkstraAgent {}
+
+impl Agent for DijkstraAgent {
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+        Intent::None
+    }
+}
+
+pub struct TabularQLearningAgent {}
+
+impl Agent for TabularQLearningAgent {
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+        Intent::None
+    }
+}
