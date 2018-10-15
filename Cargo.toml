@@ -8,7 +8,7 @@ authors = [
 ]
 
 [lib]
-name = "rustjammers"
+name = "rustjammers_engine"
 crate-type = ["dylib"]
 
 [dependencies]
