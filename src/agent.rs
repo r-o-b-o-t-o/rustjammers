@@ -9,7 +9,8 @@ pub enum AgentType {
     HumanPlayer,
     RandomRollout,
     Dijkstra,
-    TabularQLearning
+    TabularQLearning,
+    None
 }
 
 pub enum Intent {
@@ -17,6 +18,17 @@ pub enum Intent {
     Move(Vector2),
     Dash(Vector2),
     Throw(::frisbee::ThrowDirection),
+}
+
+pub fn agent_type_from_i8(side: i8) -> AgentType {
+    match side {
+        0 => AgentType::Random,
+        1 => AgentType::HumanPlayer,
+        2 => AgentType::RandomRollout,
+        3 => AgentType::Dijkstra,
+        4 => AgentType::TabularQLearning,
+        _ => AgentType::None
+    }
 }
 
 

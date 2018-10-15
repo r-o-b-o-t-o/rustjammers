@@ -41,6 +41,7 @@ impl GameEngine {
             AgentType::RandomRollout => Box::new(RandomAgent{}),
             AgentType::Dijkstra => Box::new(RandomAgent{}),
             AgentType::TabularQLearning => Box::new(RandomAgent{}),
+            AgentType::None => Box::new(RandomAgent{}),
         }
     }
 
@@ -61,6 +62,16 @@ impl GameEngine {
         self.frisbee.direction.x = 0.0;
         self.frisbee.direction.y = 0.0;
         self.frisbee.speed = 0.0;
+    }
+
+    #[no_mangle]
+    pub extern fn send_type_p1(&mut self, agent_type: i8) {
+        self.a1 = Some(Self::match_agent(::agent::agent_type_from_i8(agent_type)));
+    }
+
+    #[no_mangle]
+    pub extern fn send_type_t2(&mut self, agent_type: i8) {
+        self.a2 = Some(Self::match_agent(::agent::agent_type_from_i8(agent_type)));
     }
 
     #[no_mangle]
