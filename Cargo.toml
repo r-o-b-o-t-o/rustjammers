@@ -1,0 +1,14 @@
+[package]
+name = "rustjammers"
+version = "0.1.0"
+authors = [
+    "Axel Cocat",
+    "Yohann Jerrain",
+    "Esteban Dumas"
+]
+
+[lib]
+name = "rustjammers"
+crate-type = ["dylib"]
+
+[dependencies]
