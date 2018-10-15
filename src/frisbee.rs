@@ -3,6 +3,7 @@ use player::PlayerSide;
 
 use rand::Rng;
 
+#[derive(Clone)]
 pub struct Frisbee {
     pub pos:            Vector2,
     pub direction:      Vector2,
@@ -10,6 +11,7 @@ pub struct Frisbee {
     pub held_by_player: Option<PlayerSide>
 }
 
+#[derive(Clone)]
 pub enum ThrowDirection {
     Up = 0,
     Middle,

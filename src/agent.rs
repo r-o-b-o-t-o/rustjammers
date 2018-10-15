@@ -4,6 +4,7 @@ use game_engine::GameEngine;
 
 use rand::Rng;
 
+#[derive(Clone)]
 pub enum AgentType {
     Random = 0,
     HumanPlayer,
@@ -12,6 +13,7 @@ pub enum AgentType {
     TabularQLearning
 }
 
+#[derive(Clone)]
 pub enum Intent {
     None,
     Move(Vector2),
@@ -19,8 +21,9 @@ pub enum Intent {
     Throw(::frisbee::ThrowDirection),
 }
 
+
 pub trait Agent {
-    fn act(&mut self, side: PlayerSide, engine: &mut GameEngine) -> Intent;
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent;
 
     fn get_random_direction(&self) -> Vector2 {
         let mut rng = ::rand::thread_rng();
@@ -32,10 +35,11 @@ pub trait Agent {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct RandomAgent {}
 
 impl Agent for RandomAgent {
-    fn act(&mut self, side: PlayerSide, engine: &mut GameEngine) -> Intent {
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
         let mut rng = ::rand::thread_rng();
 
         match engine.frisbee.held_by_player {
