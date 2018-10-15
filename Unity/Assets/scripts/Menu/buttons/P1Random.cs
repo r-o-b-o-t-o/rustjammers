@@ -23,6 +23,6 @@ public class P1Random : MonoBehaviour {
 	{
 		Debug.Log("You have clicked the button5!");
 		PlayerType.MyPlayersType.typeP1txt.text = "Random";
-		PlayerType.MyPlayersType.typeP1 = 1;
+		PlayerType.MyPlayersType.typeP1 = 0;
 	}
 }
