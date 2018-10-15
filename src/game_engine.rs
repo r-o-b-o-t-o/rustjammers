@@ -16,13 +16,13 @@ pub struct SharedData {
     pub zbee_y:     f64,
 }
 
-pub struct GameState {
+pub struct GameEngine {
     pub p1:      Player,
     pub p2:      Player,
     pub frisbee: Frisbee,
 }
 
-impl GameState {
+impl GameEngine {
     #[no_mangle]
     pub extern fn initialize() -> *mut Self {
         unsafe { transmute(Box::new(Self::new())) }
