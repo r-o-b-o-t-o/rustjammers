@@ -105,8 +105,7 @@ impl GameEngine {
             match intent {
                 Intent::None => {},
                 Intent::Move(dir) => {
-                    player.pos.x += dir.x * 0.1;
-                    player.pos.y += dir.y * 0.1;
+                    player.pos += *dir * 0.1;
                 },
                 Intent::Dash(dir) => {
                     // TODO: accelerate instead of teleport
@@ -116,15 +115,20 @@ impl GameEngine {
                 Intent::Throw(dir) => {
                     use frisbee::ThrowDirection;
 
+                    let horizontal = player.get_horizontal_aim_direction();
                     frisbee.direction = match dir {
                         ThrowDirection::Up => {
-                            Vector2::new(0.0, 0.0)
+                            let mut dir = Vector2::new(horizontal, -1.0);
+                            dir.normalize();
+                            dir
                         },
                         ThrowDirection::Middle => {
-                            Vector2::new(-1.0, 0.0)
+                            Vector2::new(horizontal, 0.0)
                         },
                         ThrowDirection::Down => {
-                            Vector2::new(0.0, 0.0)
+                            let mut dir = Vector2::new(horizontal, 1.0);
+                            dir.normalize();
+                            dir
                         }
                     };
                     frisbee.speed = 1.0;
@@ -133,6 +137,27 @@ impl GameEngine {
         }
         apply_action(&mut self.players.0, &mut self.frisbee, &intents.0);
         apply_action(&mut self.players.1, &mut self.frisbee, &intents.1);
+
+        match self.frisbee.held_by_player {
+            Some(held_by) => {
+                match held_by {
+                    // Snap to player.
+                    // TODO: add an offset to make it look like it snaps on hands.
+                    Left => self.frisbee.pos = self.players.0.pos,
+                    Right => self.frisbee.pos = self.players.1.pos
+                };
+            },
+            None => {
+                if self.frisbee.speed != 0.0 {
+                    self.frisbee.pos += self.frisbee.direction * self.frisbee.speed * 0.1;
+                }
+            },
+        };
+
+        // TODO: handle frisbee catch
+        // TODO: handle player-wall collisions
+        // TODO: handle frisbee-wall collisions
+        // TODO: handle frisbee-goal collisions
     }
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {

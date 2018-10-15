@@ -35,4 +35,11 @@ impl Player {
             score: 0
         }
     }
+
+    pub fn get_horizontal_aim_direction(&self) -> f64 {
+        match self.side {
+            Left => 1.0,
+            Right => -1.0
+        }
+    }
 }
