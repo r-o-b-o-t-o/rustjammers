@@ -1,5 +1,5 @@
 use vector2::Vector2;
-use shared_data::SharedData;
+use game_engine::GameEngine;
 
 pub enum AgentType {
     Random = 0,
@@ -16,13 +16,13 @@ pub enum Intent {
 }
 
 pub trait Agent {
-    fn act(&mut self, state: &mut SharedData);
+    fn act(&mut self, state: &mut GameEngine);
 }
 
 pub struct RandomAgent {}
 
 impl Agent for RandomAgent {
-    fn act(&mut self, state: &mut SharedData) {
+    fn act(&mut self, state: &mut GameEngine) {
         
     }
 }

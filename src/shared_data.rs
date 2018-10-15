@@ -1,4 +1,3 @@
-use agent::Intent;
 use player::PlayerSide;
 use game_engine::GameEngine;
 
@@ -16,16 +15,10 @@ pub struct SharedData {
 
     pub zbee_x:     f64,
     pub zbee_y:     f64,
-    pub zbee_dir_x: f64,
-    pub zbee_dir_y: f64,
-    pub zbee_speed: f64,
+    pub zbee_held:  i8,
 }
 
 impl SharedData {
-    pub fn step(&mut self, p1_action: Intent, p2_action: Intent) {
-        
-    }
-
     pub fn new() -> Self {
         Self {
             p1_x:       0.0,
@@ -40,28 +33,23 @@ impl SharedData {
 
             zbee_x:     0.0,
             zbee_y:     0.0,
-            zbee_dir_x: 0.0,
-            zbee_dir_y: 0.0,
-            zbee_speed: 0.0,
+            zbee_held:  -1
         }
     }
 
-    pub fn to_game_engine(self, game_engine: &mut GameEngine) {
-        game_engine.p1.pos.x = self.p1_x;
-        game_engine.p1.pos.y = self.p1_y;
-        game_engine.p1.score = self.p1_score;
-        game_engine.p1.side = Some(PlayerSide::Left);
+    pub fn to_game_engine(self, engine: &mut GameEngine) {
+        engine.p1.pos.x = self.p1_x;
+        engine.p1.pos.y = self.p1_y;
+        engine.p1.score = self.p1_score;
+        engine.p1.side = Some(PlayerSide::Left);
         
-        game_engine.p2.pos.x = self.p2_x;
-        game_engine.p2.pos.y = self.p2_y;
-        game_engine.p2.score = self.p2_score;
-        game_engine.p2.side = Some(PlayerSide::Right);
+        engine.p2.pos.x = self.p2_x;
+        engine.p2.pos.y = self.p2_y;
+        engine.p2.score = self.p2_score;
+        engine.p2.side = Some(PlayerSide::Right);
 
-        game_engine.frisbee.pos.x = self.zbee_x;
-        game_engine.frisbee.pos.y = self.zbee_y;
-        game_engine.frisbee.direction.x = self.zbee_dir_x;
-        game_engine.frisbee.direction.y = self.zbee_dir_y;
-        game_engine.frisbee.speed = self.zbee_speed;
-
+        engine.frisbee.pos.x = self.zbee_x;
+        engine.frisbee.pos.y = self.zbee_y;
+        engine.frisbee.held_by_player = ::player::player_side_from_i8(self.zbee_held);
     }
 }

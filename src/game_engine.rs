@@ -1,3 +1,4 @@
+use agent::Intent;
 use frisbee::Frisbee;
 use shared_data::SharedData;
 use player::{ Player, PlayerSide };
@@ -51,7 +52,6 @@ impl GameEngine {
     #[no_mangle]
     pub extern fn epoch(&mut self) {
         
-    
     }
 
     #[no_mangle]
@@ -61,21 +61,23 @@ impl GameEngine {
         data
     }
 
-    pub fn to_shared_data(&self, shared_data: &mut SharedData) {
-        shared_data.p1_x = self.p1.pos.x;
-        shared_data.p1_y = self.p1.pos.y;
-        shared_data.p1_score = self.p1.score;
-        shared_data.p1_side = 0;
+    pub fn step(&mut self, p1_action: Intent, p2_action: Intent) {
         
-        shared_data.p2_x = self.p2.pos.x;
-        shared_data.p2_y = self.p2.pos.y;
-        shared_data.p2_score = self.p2.score;
-        shared_data.p2_side = 1;
+    }
 
-        shared_data.zbee_x = self.frisbee.pos.x;
-        shared_data.zbee_y = self.frisbee.pos.y;
-        shared_data.zbee_dir_x = self.frisbee.direction.x;
-        shared_data.zbee_dir_y = self.frisbee.direction.y;
-        shared_data.zbee_speed = self.frisbee.speed;
+    pub fn to_shared_data(&self, shared: &mut SharedData) {
+        shared.p1_x = self.p1.pos.x;
+        shared.p1_y = self.p1.pos.y;
+        shared.p1_score = self.p1.score;
+        shared.p1_side = 0;
+        
+        shared.p2_x = self.p2.pos.x;
+        shared.p2_y = self.p2.pos.y;
+        shared.p2_score = self.p2.score;
+        shared.p2_side = 1;
+
+        shared.zbee_x = self.frisbee.pos.x;
+        shared.zbee_y = self.frisbee.pos.y;
+        shared.zbee_held = ::player::player_side_to_i8(self.frisbee.held_by_player);
     }
 }

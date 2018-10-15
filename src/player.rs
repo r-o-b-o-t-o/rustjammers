@@ -1,8 +1,24 @@
 use vector2::Vector2;
 
+#[derive(Copy, Clone)]
 pub enum PlayerSide {
     Left = 0,
     Right = 1
+}
+
+pub fn player_side_to_i8(side: Option<PlayerSide>) -> i8 {
+    match side {
+        Some(ref side) => *side as i8,
+        None => -1
+    }
+}
+
+pub fn player_side_from_i8(side: i8) -> Option<PlayerSide> {
+    match side {
+        0 => Some(PlayerSide::Left),
+        1 => Some(PlayerSide::Right),
+        _ => None
+    }
 }
 
 pub struct Player {
