@@ -1,6 +1,7 @@
 ﻿//Esteban
 
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,10 +17,11 @@ public class GameViewManagerScript : MonoBehaviour
 	
 	public Transform FrisbeeTransform;
 	private bool frisbeeHeld = false;
-
-	public Text P1Score;
+	private int timetoend;
+	public TextMesh Timer;
+	public TextMesh P1Score;
 	
-	public Text P2Score;
+	public TextMesh P2Score;
 	
 	[StructLayout(LayoutKind.Sequential)]
 	public struct ManagedState
@@ -76,6 +78,15 @@ public class GameViewManagerScript : MonoBehaviour
 		Throw = 32,
 	}
 	
+	IEnumerator countdown(int time)
+	{
+		for (int i = 0; i < time + 1; i++)
+		{
+			timetoend -= 1;
+			yield return new WaitForSeconds(1f);
+		}
+	}
+	
 	void Start()
 	{
 		Debug.Log(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff") + " - Initializing engine...");
@@ -85,6 +96,8 @@ public class GameViewManagerScript : MonoBehaviour
 		send_type_p1(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP1);
 		send_type_p2(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP2);
 		Debug.Log(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff") + " - Engine ready [" + currentGameEngine + "].");
+		timetoend = 25;
+		StartCoroutine(countdown(timetoend));
 	}
 
 	private void CollectInput(int index) {
@@ -150,8 +163,10 @@ public class GameViewManagerScript : MonoBehaviour
 		if (!frisbeeHeld) {
 			FrisbeeTransform.position = new Vector3((float)MState.zbee_x, P2Transform.position.y,(float)MState.zbee_y);
 		}
+		Timer.text = ""+(timetoend - 1);
 	}
-
+	
+	
 
 	private void OnDestroy()
 	{
