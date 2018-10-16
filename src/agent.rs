@@ -62,14 +62,6 @@ impl Agent for RandomAgent {
                 if rand < 0.7 {
                     // Throw
                     return Intent::Throw(::frisbee::random_throw_direction());
-                } else if rand < 0.8 {
-                    // Dash, throw later
-                    let dir = self.get_random_direction();
-                    return Intent::Dash(dir);
-                } else if rand < 0.9 {
-                    // Move, throw later
-                    let dir = self.get_random_direction();
-                    return Intent::Move(dir);
                 } else {
                     // Wait, throw later
                 }
@@ -77,11 +69,11 @@ impl Agent for RandomAgent {
             _ => {
                 // The agent does not hold the frisbee
                 let rand = rng.gen_range(0.0, 1.0);
-                if rand < 0.7 {
+                if rand < 0.5 {
                     // Move
                     let dir = self.get_random_direction();
                     return Intent::Move(dir);
-                } else if rand < 0.85 {
+                } else if rand < 0.6 {
                     // Dash
                     let dir = self.get_random_direction();
                     return Intent::Dash(dir);

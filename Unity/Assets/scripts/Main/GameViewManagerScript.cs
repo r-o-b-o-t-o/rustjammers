@@ -155,11 +155,11 @@ public class GameViewManagerScript : MonoBehaviour
 		}
 		if (MState.time < 10)
 		{
-			Timer.text = "0" + (int) MState.time;
+			Timer.text = "0" + Mathf.RoundToInt((float) MState.time);
 		}
 		else
 		{
-			Timer.text = ""+(int)MState.time;
+			Timer.text = Mathf.RoundToInt((float)MState.time).ToString();
 		}
 	}
 
