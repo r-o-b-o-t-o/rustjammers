@@ -10,7 +10,7 @@ struct Circle {
 pub fn player_collision(player: &mut Player) {
     let side = player.get_horizontal_position();
     const WALL_EXT: f64 = 9.4;
-    const NET: f64 = 0.1;
+    const NET: f64 = 0.75;
     const WALL_VERTICAL: f64 = 4.4;
 
     if side > 0.0 {
@@ -58,11 +58,11 @@ pub fn player_collides_with_frisbee(player: &Player, frisbee: &Frisbee) -> bool 
 
     let player_bounds = Circle {
         center: player.pos,
-        radius: 1.0
+        radius: 0.5
     };
     let frisbee_bounds = Circle {
         center: frisbee.pos,
-        radius: 1.0
+        radius: 0.5
     };
 
     let d2 = (player_bounds.center.x - frisbee_bounds.center.x).powf(2.0) + (player_bounds.center.y - frisbee_bounds.center.y).powf(2.0);
