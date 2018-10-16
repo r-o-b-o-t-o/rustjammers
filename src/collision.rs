@@ -7,8 +7,9 @@ struct Circle {
     pub radius: f64
 }
 
-pub fn player_collision(player: &mut Player) {
+pub fn player_collision(player: &mut Player) -> bool {
     let side = player.get_horizontal_position();
+    let mut collided = false;
     const WALL_EXT: f64 = 9.4;
     const NET: f64 = 0.75;
     const WALL_VERTICAL: f64 = 4.4;
@@ -16,25 +17,33 @@ pub fn player_collision(player: &mut Player) {
     if side > 0.0 {
         if player.pos.x > WALL_EXT {
             player.pos.x = WALL_EXT;
+            collided = true;
         }
         if player.pos.x < NET {
             player.pos.x = NET;
+            collided = true;
         }
     }
     if side < 0.0 {
         if player.pos.x < -WALL_EXT {
             player.pos.x = -WALL_EXT;
+            collided = true;
         }
         if player.pos.x > -NET {
             player.pos.x = -NET;
+            collided = true;
         }
     }
     if player.pos.y > WALL_VERTICAL {
         player.pos.y = WALL_VERTICAL;
+        collided = true;
     }
     if player.pos.y < -WALL_VERTICAL {
         player.pos.y = -WALL_VERTICAL;
+        collided = true;
     }
+
+    collided
 }
 
 pub fn frisbee_collision_wall(frisbee: &mut Frisbee) {
@@ -43,7 +52,6 @@ pub fn frisbee_collision_wall(frisbee: &mut Frisbee) {
     if frisbee.pos.y >= WALL_VERTICAL || frisbee.pos.y <= -WALL_VERTICAL {
         frisbee.direction.y *= -1.0;
     }
-    
 }
 
 pub fn frisbee_collision_goal(frisbee: &mut Frisbee, players: &mut (Player, Player)) -> bool {

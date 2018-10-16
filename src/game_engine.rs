@@ -257,8 +257,14 @@ impl GameEngine {
             },
         };
 
-        ::collision::player_collision(&mut self.players.0);
-        ::collision::player_collision(&mut self.players.1);
+        let collided = ::collision::player_collision(&mut self.players.0);
+        if collided {
+            self.players.0.slide = None;
+        }
+        let collided = ::collision::player_collision(&mut self.players.1);
+        if collided {
+            self.players.1.slide = None;
+        }
 
         ::collision::frisbee_collision_wall(&mut self.frisbee);
         let goal = ::collision::frisbee_collision_goal(&mut self.frisbee, &mut self.players);
