@@ -59,7 +59,7 @@ impl Agent for RandomAgent {
             Some(held_side) if held_side == side => {
                 // The agent holds the frisbee
                 let rand = rng.gen_range(0.0, 1.0);
-                if rand < 0.7 {
+                if rand < 0.25 {
                     // Throw
                     return Intent::Throw(::frisbee::random_throw_direction());
                 } else {
