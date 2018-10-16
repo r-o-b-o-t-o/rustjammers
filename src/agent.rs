@@ -140,8 +140,7 @@ impl Agent for HumanPlayerAgent {
                     36 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw left
                     _ => Intent::None
                 }}
-        };
-        Intent::None
+        }
     }
 }
 

@@ -104,7 +104,12 @@ public class GameViewManagerScript : MonoBehaviour
 			inputs[index] |= HumanInput.Up;
 		}
 
-		Debug.Log("index: " + index + ", " + " input manager key: " + ("P" + inputManagerIndex + "Horizontal") + ", " + inputs[index]);
+		if (Input.GetButtonDown("P" + inputManagerIndex + "Throw")) {
+			inputs[index] |= HumanInput.Throw;
+		}
+		if (Input.GetButtonDown("P" + inputManagerIndex + "Dash")) {
+			inputs[index] |= HumanInput.Dash;
+		}
 	}
 	
 	void Update () {
