@@ -195,6 +195,7 @@ impl GameEngine {
         ::collision::player_collision(&mut self.players.1);
 
         // TODO: handle frisbee-wall collisions
+        ::collision::frisbee_collision(&mut self.frisbee);
         // TODO: handle frisbee-goal collisions
     }
 

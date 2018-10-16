@@ -114,11 +114,10 @@ impl Agent for HumanPlayerAgent {
                     8 => Intent::Move(Vector2::new(1.0, 0.0)),//Right
                     9 => Intent::Move(Vector2::new(1.0, 1.0).normalized()),//Up + Right
                     10 => Intent::Move(Vector2::new(1.0, -1.0).normalized()),//Down + Right
-                    //Dash = 16,
-                    32 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw
-                    33 => Intent::Throw(::frisbee::ThrowDirection::Up),//Throw up
-                    34 => Intent::Throw(::frisbee::ThrowDirection::Down),//Throw down
-                    40 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw right
+                    16 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw
+                    17 => Intent::Throw(::frisbee::ThrowDirection::Up),//Throw up
+                    18 => Intent::Throw(::frisbee::ThrowDirection::Down),//Throw down
+                    24 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw right
                     _ => Intent::None
                 }
             },
@@ -133,13 +132,13 @@ impl Agent for HumanPlayerAgent {
                     8 => Intent::Move(Vector2::new(1.0, 0.0)),//Right
                     9 => Intent::Move(Vector2::new(1.0, 1.0).normalized()),//Up + Right
                     10 => Intent::Move(Vector2::new(1.0, -1.0).normalized()),//Down + Right
-                    //Dash = 16,
-                    32 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw
-                    33 => Intent::Throw(::frisbee::ThrowDirection::Up),//Throw up
-                    34 => Intent::Throw(::frisbee::ThrowDirection::Down),//Throw down
-                    36 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw left
+                    16 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw
+                    17 => Intent::Throw(::frisbee::ThrowDirection::Up),//Throw up
+                    18 => Intent::Throw(::frisbee::ThrowDirection::Down),//Throw down
+                    20 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw left
                     _ => Intent::None
-                }}
+                }
+            }
         }
     }
 }

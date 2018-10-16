@@ -37,6 +37,15 @@ pub fn player_collision(player: &mut Player) {
     }
 }
 
+pub fn frisbee_collision(frisbee: &mut Frisbee) {
+    const WALL_VERTICAL: f64 = 4.4;
+
+    if frisbee.pos.y >= WALL_VERTICAL || frisbee.pos.y <= -WALL_VERTICAL {
+        frisbee.direction.y *= -1.0;
+    }
+    
+}
+
 pub fn player_collides_with_frisbee(player: &Player, frisbee: &Frisbee) -> bool {
     match frisbee.last_held {
         Some(last_held) => {

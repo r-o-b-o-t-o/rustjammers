@@ -14,7 +14,7 @@ public class GameViewManagerScript : MonoBehaviour
 	
 	public Transform P2Transform;
 	public Transform P2Hands;
-	
+
 	public Transform FrisbeeTransform;
 	private bool frisbeeHeld = false;
 	private int timetoend;
@@ -76,11 +76,9 @@ public class GameViewManagerScript : MonoBehaviour
 		Down = 2,
 		Left = 4,
 		Right = 8,
-		Dash = 16,
-		Throw = 32,
+		Throw = 16,
 	}
-	
-	
+
 	void Start()
 	{
 		Debug.Log(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff") + " - Initializing engine...");
@@ -90,7 +88,6 @@ public class GameViewManagerScript : MonoBehaviour
 		send_type_p1(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP1);
 		send_type_p2(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP2);
 		Debug.Log(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff") + " - Engine ready [" + currentGameEngine + "].");
-		timetoend = 25;
 	}
 
 	private void CollectInput(int index) {
@@ -112,9 +109,6 @@ public class GameViewManagerScript : MonoBehaviour
 
 		if (Input.GetButtonDown("P" + inputManagerIndex + "Throw")) {
 			inputs[index] |= HumanInput.Throw;
-		}
-		if (Input.GetButtonDown("P" + inputManagerIndex + "Dash")) {
-			inputs[index] |= HumanInput.Dash;
 		}
 	}
 	
@@ -165,8 +159,7 @@ public class GameViewManagerScript : MonoBehaviour
 			Timer.text = ""+(int)MState.time;
 		}
 	}
-	
-	
+
 
 	private void OnDestroy()
 	{
