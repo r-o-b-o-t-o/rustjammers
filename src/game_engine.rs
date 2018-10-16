@@ -1,9 +1,9 @@
 use vector2::Vector2;
 use frisbee::Frisbee;
+use std::time::Instant;
 use shared_data::SharedData;
 use player::{ Player, PlayerSide };
 use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRolloutAgent, DijkstraAgent, TabularQLearningAgent };
-use std::time::{Duration, Instant};
 
 use std::mem::transmute;
 
@@ -129,7 +129,12 @@ impl GameEngine {
             match intent {
                 Intent::None => {},
                 Intent::Move(dir) => {
-                    player.pos += *dir * 0.1;
+                    match frisbee.held_by_player {
+                        Some(held_by) if held_by == player.side.unwrap() => {},
+                        _ => {
+                            player.pos += *dir * 0.1;
+                        }
+                    };
                 },
                 Intent::Dash(dir) => {
                     // TODO: accelerate instead of teleport

@@ -1,6 +1,6 @@
+use std::time::Instant;
 use player::PlayerSide;
 use game_engine::GameEngine;
-use std::time::{Duration, Instant};
 
 #[repr(C)]
 pub struct SharedData {
