@@ -16,7 +16,7 @@ pub struct GameEngine {
     pub state_of_game: StateOfGame,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum StateOfGame {
     Start,
     Playing,
@@ -140,6 +140,12 @@ impl GameEngine {
     }
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
+    	if self.players.0.score>=30 || self.players.1.score <= 30 || 60.0 - (self.time.elapsed().as_secs()) as f64 <= 0.0{
+    		self.state_of_game= StateOfGame::End;
+    	}
+    	if self.state_of_game==StateOfGame::End{
+    		return;
+    	}
         fn apply_action(player: &mut Player, frisbee: &mut Frisbee, intent: &Intent) {
             match intent {
                 Intent::None => {},

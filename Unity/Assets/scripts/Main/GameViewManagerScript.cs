@@ -11,6 +11,13 @@ public class GameViewManagerScript : MonoBehaviour
 {
 	public Transform P1Transform;
 	public Transform P1Hands;
+
+	public GameObject UI;
+	public Text final_score_P1;
+	public Text final_score_P2;
+	public Text wl_p1;
+	public Text wl_p2;
+
 	
 	public Transform P2Transform;
 	public Transform P2Hands;
@@ -83,6 +90,7 @@ public class GameViewManagerScript : MonoBehaviour
 
 	void Start()
 	{
+		UI.SetActive(false);
 		Debug.Log(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff") + " - Initializing engine...");
 		currentGameEngine = initialize();
 		reset(currentGameEngine);
@@ -153,13 +161,46 @@ public class GameViewManagerScript : MonoBehaviour
 		if (!frisbeeHeld) {
 			FrisbeeTransform.position = new Vector3((float)MState.zbee_x, P2Transform.position.y,(float)MState.zbee_y);
 		}
-		if (MState.time < 10)
+		if (MState.State != 2)
 		{
-			Timer.text = "0" + Mathf.RoundToInt((float) MState.time);
+			if (MState.time < 10)
+			{
+				Timer.text = "0" + Mathf.RoundToInt((float) MState.time);
+			}
+			else
+			{
+				Timer.text = Mathf.RoundToInt((float) MState.time).ToString();
+			}
 		}
 		else
 		{
-			Timer.text = Mathf.RoundToInt((float)MState.time).ToString();
+			UI.SetActive(true);
+			if (MState.p1_score < 10)
+			{
+				final_score_P1.text = "0" + MState.p1_score;
+			}
+			else
+			{
+				final_score_P1.text = "" + MState.p1_score;
+			}
+			if (MState.p2_score < 10)
+			{
+				final_score_P2.text = "0" + MState.p2_score;
+			}
+			else
+			{
+				final_score_P2.text = "" + MState.p2_score;
+			}
+			if (MState.p2_score > MState.p1_score)
+			{
+				wl_p1.text = "Looser";
+				wl_p2.text = "Winner";
+			}
+			if (MState.p2_score < MState.p1_score)
+			{
+				wl_p1.text = "Winner";
+				wl_p2.text = "Looser";
+			}
 		}
 	}
 
