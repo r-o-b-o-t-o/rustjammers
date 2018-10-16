@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 //Esteban
-public class P2Human : MonoBehaviour {
+public class P2Back : MonoBehaviour {
 
 	public Button p2Human;
 
@@ -21,7 +21,11 @@ public class P2Human : MonoBehaviour {
 	
 	void TaskOnClick()
 	{
-		PlayerType.MyPlayersType.typeP2txt.text = "Human";
-		PlayerType.MyPlayersType.typeP2 = PlayerType.AgentType.Human;
+		PlayerType.MyPlayersType.p2id-=1;
+		if (PlayerType.MyPlayersType.p2id < 0)
+		{
+			PlayerType.MyPlayersType.p2id = 4;
+		}
+		PlayerType.MyPlayersType.NewNamep2(PlayerType.MyPlayersType.p2id);
 	}
 }

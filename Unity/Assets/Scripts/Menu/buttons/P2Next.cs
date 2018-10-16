@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 //Esteban
-public class P2Random : MonoBehaviour {
+public class P2Next : MonoBehaviour {
 
 	public Button p2Random;
 
@@ -21,7 +21,11 @@ public class P2Random : MonoBehaviour {
 	
 	void TaskOnClick()
 	{
-		PlayerType.MyPlayersType.typeP2txt.text = "Random";
-		PlayerType.MyPlayersType.typeP2 = PlayerType.AgentType.Random;
+		PlayerType.MyPlayersType.p2id+=1;
+		if (PlayerType.MyPlayersType.p2id > 4)
+		{
+			PlayerType.MyPlayersType.p2id = 0;
+		}
+		PlayerType.MyPlayersType.NewNamep2(PlayerType.MyPlayersType.p2id);
 	}
 }

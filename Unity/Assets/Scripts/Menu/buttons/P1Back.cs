@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine;
 using UnityEngine.UI;
 //Esteban
-public class P1Humain : MonoBehaviour {
+public class P1Back : MonoBehaviour {
 
 	public Button p1Humain;
 
@@ -22,7 +22,11 @@ public class P1Humain : MonoBehaviour {
 	
 	void TaskOnClick()
 	{
-		PlayerType.MyPlayersType.typeP1txt.text = "Human";
-		PlayerType.MyPlayersType.typeP1 = PlayerType.AgentType.Human;
+		PlayerType.MyPlayersType.p1id-=1;
+		if (PlayerType.MyPlayersType.p1id < 0)
+		{
+			PlayerType.MyPlayersType.p1id = 4;
+		}
+		PlayerType.MyPlayersType.NewNamep1(PlayerType.MyPlayersType.p1id);
 	}
 }
