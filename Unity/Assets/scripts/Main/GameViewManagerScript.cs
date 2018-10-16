@@ -37,6 +37,8 @@ public class GameViewManagerScript : MonoBehaviour
 		public double zbee_x;
 		public double zbee_y;
 		public sbyte zbee_held;
+
+		public double time;
 	}
 
 	private ManagedState MState;
@@ -78,14 +80,6 @@ public class GameViewManagerScript : MonoBehaviour
 		Throw = 32,
 	}
 	
-	IEnumerator countdown(int time)
-	{
-		for (int i = 0; i < time + 1; i++)
-		{
-			timetoend -= 1;
-			yield return new WaitForSeconds(1f);
-		}
-	}
 	
 	void Start()
 	{
@@ -97,7 +91,6 @@ public class GameViewManagerScript : MonoBehaviour
 		send_type_p2(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP2);
 		Debug.Log(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff") + " - Engine ready [" + currentGameEngine + "].");
 		timetoend = 25;
-		StartCoroutine(countdown(timetoend));
 	}
 
 	private void CollectInput(int index) {
@@ -163,7 +156,7 @@ public class GameViewManagerScript : MonoBehaviour
 		if (!frisbeeHeld) {
 			FrisbeeTransform.position = new Vector3((float)MState.zbee_x, P2Transform.position.y,(float)MState.zbee_y);
 		}
-		Timer.text = ""+(timetoend - 1);
+		Timer.text = ""+MState.time;
 	}
 	
 	
