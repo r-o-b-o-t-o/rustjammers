@@ -1,5 +1,6 @@
 use vector2::Vector2;
 use player::PlayerSide;
+use frisbee::ThrowDirection;
 use game_engine::GameEngine;
 
 use rand::Rng;
@@ -22,7 +23,6 @@ pub enum Intent {
 }
 
 fn simulation(engine: &mut GameEngine, side: PlayerSide, intent: Intent) -> (i8, Intent) {
-
     let intents = match side {
         PlayerSide::Left => (intent, Intent::None),
         PlayerSide::Right => (Intent::None, intent),
@@ -31,7 +31,7 @@ fn simulation(engine: &mut GameEngine, side: PlayerSide, intent: Intent) -> (i8,
     engine.step(intents);
 
     for _i in 0..300 {
-        engine.epoch(0, 0);
+        engine.epoch(HumanIntent::IDLE, HumanIntent::IDLE);
     }
 
     let score = match side {
@@ -110,47 +110,63 @@ impl Agent for RandomAgent {
 
 pub struct HumanPlayerAgent {}
 
+bitflags! {
+    pub struct HumanIntent: u8 {
+        const IDLE  = 0;
+        const UP    = 1;
+        const DOWN  = 2;
+        const LEFT  = 4;
+        const RIGHT = 8;
+        const THROW = 16;
+    }
+}
+
 impl Agent for HumanPlayerAgent {
     fn get_type(&self) -> AgentType{
         AgentType::HumanPlayer
     }
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
-        match side {
-            PlayerSide::Left => {
-                match engine.inputs.0 {
-                    0 => Intent::None,
-                    1 => Intent::Move(Vector2::new(0.0, 1.0)),//up
-                    2 => Intent::Move(Vector2::new(0.0, -1.0)),//Down
-                    4 => Intent::Move(Vector2::new(-1.0, 0.0)),//Left
-                    5 => Intent::Move(Vector2::new(-1.0, 1.0).normalized()),//Up + Left
-                    6 => Intent::Move(Vector2::new(-1.0, -1.0).normalized()),//Down + Left
-                    8 => Intent::Move(Vector2::new(1.0, 0.0)),//Right
-                    9 => Intent::Move(Vector2::new(1.0, 1.0).normalized()),//Up + Right
-                    10 => Intent::Move(Vector2::new(1.0, -1.0).normalized()),//Down + Right
-                    16 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw
-                    17 => Intent::Throw(::frisbee::ThrowDirection::Up),//Throw up
-                    18 => Intent::Throw(::frisbee::ThrowDirection::Down),//Throw down
-                    24 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw right
-                    _ => Intent::None
+        let input = match side {
+            PlayerSide::Left => engine.inputs.0,
+            PlayerSide::Right => engine.inputs.1,
+        };
+        let has_frisbee = match engine.frisbee.held_by_player {
+            Some(held_by) if held_by == side => true,
+            _ => false,
+        };
+
+        let mut dir = Vector2::zero();
+        if input.contains(HumanIntent::UP) {
+            dir.y = 1.0;
+        }
+        if input.contains(HumanIntent::DOWN) {
+            dir.y = -1.0;
+        }
+        if input.contains(HumanIntent::LEFT) {
+            dir.x = -1.0;
+        }
+        if input.contains(HumanIntent::RIGHT) {
+            dir.x = 1.0;
+        }
+        dir.normalize();
+
+        if input.contains(HumanIntent::THROW) {
+            if has_frisbee {
+                let mut throw_dir = ThrowDirection::Middle;
+                if input.contains(HumanIntent::UP) {
+                    throw_dir = ThrowDirection::Up;
+                } else if input.contains(HumanIntent::DOWN) {
+                    throw_dir = ThrowDirection::Down;
                 }
-            },
-            PlayerSide::Right => {
-                match engine.inputs.1 {
-                    0 => Intent::None,
-                    1 => Intent::Move(Vector2::new(0.0, 1.0)),//up
-                    2 => Intent::Move(Vector2::new(0.0, -1.0)),//Down
-                    4 => Intent::Move(Vector2::new(-1.0, 0.0)),//Left
-                    5 => Intent::Move(Vector2::new(-1.0, 1.0).normalized()),//Up + Left
-                    6 => Intent::Move(Vector2::new(-1.0, -1.0).normalized()),//Down + Left
-                    8 => Intent::Move(Vector2::new(1.0, 0.0)),//Right
-                    9 => Intent::Move(Vector2::new(1.0, 1.0).normalized()),//Up + Right
-                    10 => Intent::Move(Vector2::new(1.0, -1.0).normalized()),//Down + Right
-                    16 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw
-                    17 => Intent::Throw(::frisbee::ThrowDirection::Up),//Throw up
-                    18 => Intent::Throw(::frisbee::ThrowDirection::Down),//Throw down
-                    20 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw left
-                    _ => Intent::None
-                }
+                Intent::Throw(throw_dir)
+            } else {
+                Intent::Dash(dir)
+            }
+        } else {
+            if dir.x == 0.0 && dir.y == 0.0 {
+                Intent::None
+            } else {
+                Intent::Move(dir)
             }
         }
     }

@@ -23,10 +23,27 @@ pub fn player_side_from_i8(side: i8) -> Option<PlayerSide> {
 }
 
 #[derive(Clone, Copy)]
+pub struct Slide {
+    pub target: Vector2,
+    pub origin: Vector2,
+    pub dir: Vector2,
+}
+
+impl Slide {
+    pub fn has_reached_goal(&self, pos: &Vector2) -> bool {
+        fn sqr_dist(a: &Vector2, b: &Vector2) -> f64 {
+            (b.x - a.x).powf(2.0) + (b.y - a.y).powf(2.0)
+        }
+        sqr_dist(pos, &self.origin) > sqr_dist(&self.origin, &self.target)
+    }
+}
+
+#[derive(Clone, Copy)]
 pub struct Player {
     pub pos:   Vector2,
     pub side:  Option<PlayerSide>,
     pub score: i8,
+    pub slide: Option<Slide>,
 }
 
 impl Player {
@@ -34,7 +51,8 @@ impl Player {
         Self {
             pos:   Vector2::zero(),
             side:  None,
-            score: 0
+            score: 0,
+            slide: None,
         }
     }
 
@@ -70,6 +88,16 @@ impl Player {
                 dir.normalize();
                 dir
             }
+        }
+    }
+
+    pub fn dash(&mut self, dir: Vector2) {
+        if self.slide.is_none() {
+            self.slide = Some(Slide {
+                origin: self.pos,
+                target: self.pos + dir,
+                dir: dir.normalized(),
+            });
         }
     }
 }
