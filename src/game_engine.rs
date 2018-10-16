@@ -3,6 +3,7 @@ use frisbee::Frisbee;
 use shared_data::SharedData;
 use player::{ Player, PlayerSide };
 use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRolloutAgent, DijkstraAgent, TabularQLearningAgent };
+use std::time::{Duration, Instant};
 
 use std::mem::transmute;
 
@@ -10,7 +11,8 @@ pub struct GameEngine {
     pub players: (Player, Player),
     pub agents:  (Option<Box<Agent>>, Option<Box<Agent>>),
     pub frisbee: Frisbee,
-    pub inputs: (i8, i8)
+    pub inputs: (i8, i8),
+    pub time:	Instant
 }
 
 impl GameEngine {
@@ -38,7 +40,8 @@ impl GameEngine {
             inputs: (
                 0,
                 0,
-            )
+            ),
+            time:Instant::now(),
         }
     }
 
@@ -70,6 +73,8 @@ impl GameEngine {
         self.frisbee.direction.x = 0.0;
         self.frisbee.direction.y = 0.0;
         self.frisbee.speed = 0.0;
+
+        self.time = Instant::now();
     }
 
     #[no_mangle]
@@ -208,5 +213,7 @@ impl GameEngine {
         shared.zbee_x = self.frisbee.pos.x;
         shared.zbee_y = self.frisbee.pos.y;
         shared.zbee_held = ::player::player_side_to_i8(self.frisbee.held_by_player);
+
+        shared.time = 60.0-(self.time.elapsed().as_secs()) as f64;
     }
 }

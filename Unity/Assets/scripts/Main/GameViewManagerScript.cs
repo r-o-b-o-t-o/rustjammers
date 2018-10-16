@@ -150,7 +150,14 @@ public class GameViewManagerScript : MonoBehaviour
 		if (!frisbeeHeld) {
 			FrisbeeTransform.position = new Vector3((float)MState.zbee_x, P2Transform.position.y,(float)MState.zbee_y);
 		}
-		Timer.text = ""+MState.time;
+		if (MState.time < 10)
+		{
+			Timer.text = "0" + Mathf.RoundToInt((float) MState.time);
+		}
+		else
+		{
+			Timer.text = Mathf.RoundToInt((float)MState.time).ToString();
+		}
 	}
 
 
