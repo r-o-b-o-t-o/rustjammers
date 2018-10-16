@@ -10,6 +10,7 @@ pub struct GameEngine {
     pub players: (Player, Player),
     pub agents:  (Option<Box<Agent>>, Option<Box<Agent>>),
     pub frisbee: Frisbee,
+    pub inputs: (i8, i8)
 }
 
 impl GameEngine {
@@ -33,7 +34,11 @@ impl GameEngine {
                 None,
                 None,
             ),
-            frisbee: Frisbee::new()
+            frisbee: Frisbee::new(),
+            inputs: (
+                0,
+                0,
+            )
         }
     }
 
@@ -78,10 +83,21 @@ impl GameEngine {
     }
 
     #[no_mangle]
-    pub extern fn epoch(&mut self) {
+    pub extern fn epoch(&mut self, p1_h_action: i8, p2_h_action: i8) {
         let mut a1 = self.agents.0.take().unwrap();
         let mut a2 = self.agents.1.take().unwrap();
 
+        let input1 = match a1.get_type() { 
+            AgentType::HumanPlayer => p1_h_action,
+            _ => 0
+        };
+
+        let input2 = match a2.get_type() {
+            AgentType::HumanPlayer => p2_h_action,
+            _ => 0
+        };
+
+        self.inputs = (input1, input2);
         let action_p1 = a1.act(PlayerSide::Left, self);
         let action_p2 = a2.act(PlayerSide::Right, self);
 

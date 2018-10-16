@@ -34,6 +34,7 @@ pub fn agent_type_from_i8(side: i8) -> AgentType {
 
 pub trait Agent {
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent;
+    fn get_type(&self) -> AgentType;
 
     fn get_random_direction(&self) -> Vector2 {
         let mut rng = ::rand::thread_rng();
@@ -48,6 +49,9 @@ pub trait Agent {
 pub struct RandomAgent {}
 
 impl Agent for RandomAgent {
+    fn get_type(&self) -> AgentType{
+        AgentType::Random
+    }
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
         let mut rng = ::rand::thread_rng();
 
@@ -94,7 +98,49 @@ impl Agent for RandomAgent {
 pub struct HumanPlayerAgent {}
 
 impl Agent for HumanPlayerAgent {
-    fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
+    fn get_type(&self) -> AgentType{
+        AgentType::HumanPlayer
+    }
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+        match side {
+            PlayerSide::Left => {
+                match engine.inputs.0 {
+                    0 => Intent::None,
+                    1 => Intent::Move(Vector2::new(0.0, 1.0)),//up
+                    2 => Intent::Move(Vector2::new(0.0, -1.0)),//Down
+                    4 => Intent::Move(Vector2::new(-1.0, 0.0)),//Left
+                    5 => Intent::Move(Vector2::new(-1.0, 1.0).normalized()),//Up + Left
+                    6 => Intent::Move(Vector2::new(-1.0, -1.0).normalized()),//Down + Left
+                    8 => Intent::Move(Vector2::new(1.0, 0.0)),//Right
+                    9 => Intent::Move(Vector2::new(1.0, 1.0).normalized()),//Up + Right
+                    10 => Intent::Move(Vector2::new(1.0, -1.0).normalized()),//Down + Right
+                    //Dash = 16,
+                    32 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw
+                    33 => Intent::Throw(::frisbee::ThrowDirection::Up),//Throw up
+                    34 => Intent::Throw(::frisbee::ThrowDirection::Down),//Throw down
+                    40 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw right
+                    _ => Intent::None
+                }
+            },
+            PlayerSide::Right => {
+                match engine.inputs.1 {
+                    0 => Intent::None,
+                    1 => Intent::Move(Vector2::new(0.0, 1.0)),//up
+                    2 => Intent::Move(Vector2::new(0.0, -1.0)),//Down
+                    4 => Intent::Move(Vector2::new(-1.0, 0.0)),//Left
+                    5 => Intent::Move(Vector2::new(-1.0, 1.0).normalized()),//Up + Left
+                    6 => Intent::Move(Vector2::new(-1.0, -1.0).normalized()),//Down + Left
+                    8 => Intent::Move(Vector2::new(1.0, 0.0)),//Right
+                    9 => Intent::Move(Vector2::new(1.0, 1.0).normalized()),//Up + Right
+                    10 => Intent::Move(Vector2::new(1.0, -1.0).normalized()),//Down + Right
+                    //Dash = 16,
+                    32 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw
+                    33 => Intent::Throw(::frisbee::ThrowDirection::Up),//Throw up
+                    34 => Intent::Throw(::frisbee::ThrowDirection::Down),//Throw down
+                    36 => Intent::Throw(::frisbee::ThrowDirection::Middle),//Throw left
+                    _ => Intent::None
+                }}
+        };
         Intent::None
     }
 }
@@ -102,6 +148,9 @@ impl Agent for HumanPlayerAgent {
 pub struct RandomRolloutAgent {}
 
 impl Agent for RandomRolloutAgent {
+    fn get_type(&self) -> AgentType{
+        AgentType::RandomRollout
+    }
     fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
         Intent::None
     }
@@ -110,6 +159,9 @@ impl Agent for RandomRolloutAgent {
 pub struct DijkstraAgent {}
 
 impl Agent for DijkstraAgent {
+    fn get_type(&self) -> AgentType{
+        AgentType::Dijkstra
+    }
     fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
         Intent::None
     }
@@ -118,6 +170,9 @@ impl Agent for DijkstraAgent {
 pub struct TabularQLearningAgent {}
 
 impl Agent for TabularQLearningAgent {
+    fn get_type(&self) -> AgentType{
+        AgentType::TabularQLearning
+    }
     fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
         Intent::None
     }
