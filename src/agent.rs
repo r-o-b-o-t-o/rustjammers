@@ -22,8 +22,8 @@ pub enum Intent {
     Throw(::frisbee::ThrowDirection),
 }
 
-fn simulation(engine: &mut GameEngine, side: PlayerSide, intent: Intent) -> (i8, Intent) {
-    let intents = match side {
+fn simulation(engine: &mut GameEngine, side: &PlayerSide, intent: Intent) -> (i8, Intent) {
+    let intents = match *side {
         PlayerSide::Left => (intent, Intent::None),
         PlayerSide::Right => (Intent::None, intent),
     };
@@ -180,89 +180,52 @@ impl Agent for RandomRolloutAgent {
     }
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
         let mut prev = (0, Intent::None);
-        let mut new_game_engine = GameEngine::new();
+        let mut new_engine = GameEngine::new();
+        let player = match side {
+            PlayerSide::Left => &engine.players.0,
+            PlayerSide::Right => &engine.players.1,
+        };
+
+        fn run_simulation(prev: &mut (i8, Intent), engine: &GameEngine, new_game_engine: &mut GameEngine, side: &PlayerSide, intent: Intent) {
+            engine.get_engine(new_game_engine);
+            let test = simulation(new_game_engine, side, intent);
+            if prev.0 < test.0 {
+                prev.0 = test.0;
+                prev.1 = test.1;
+            }
+        }
 
         match engine.frisbee.held_by_player {
             Some(held_by) if held_by == side => {
                 // If the agent holds the frisbee
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Throw(::frisbee::ThrowDirection::Up));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Throw(::frisbee::ThrowDirection::Middle));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Throw(::frisbee::ThrowDirection::Down));
-                if prev.0 < test.0 { prev = test; }
+                run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Up));
+                run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Middle));
+                run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Down));
             },
             _ => {
                 // If the agent doesn't hold the frisbee
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(0.0, 1.0)));
-                if prev.0 < test.0 { prev = test; }
+                if player.slide.is_none() {
+                    // Movements are allowed only if the player is not dashing,
+                    // so we're saving computing time if they are dashing
 
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(0.0, -1.0)));
-                if prev.0 < test.0 { prev = test; }
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Move(Vector2::new(0.0, 1.0)));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Move(Vector2::new(0.0, -1.0)));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Move(Vector2::new(-1.0, 0.0)));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Move(Vector2::new(1.0, 0.0)));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Move(Vector2::new(-1.0, -1.0).normalized()));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Move(Vector2::new(-1.0, 1.0).normalized()));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Move(Vector2::new(1.0, -1.0).normalized()));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Move(Vector2::new(1.0, 1.0).normalized()));
 
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(-1.0, 0.0)));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(1.0, 0.0)));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(-1.0, -1.0).normalized()));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(-1.0, 1.0).normalized()));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(1.0, -1.0).normalized()));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(1.0, 1.0).normalized()));
-                if prev.0 < test.0 { prev = test; }
-
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Dash(Vector2::new(0.0, 1.0)));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Dash(Vector2::new(0.0, -1.0)));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Dash(Vector2::new(-1.0, 0.0)));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Dash(Vector2::new(1.0, 0.0)));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Dash(Vector2::new(-1.0, -1.0).normalized()));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Dash(Vector2::new(-1.0, 1.0).normalized()));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Dash(Vector2::new(1.0, -1.0).normalized()));
-                if prev.0 < test.0 { prev = test; }
-
-                engine.get_engine(&mut new_game_engine);
-                let test = simulation(&mut new_game_engine, side, Intent::Dash(Vector2::new(1.0, 1.0).normalized()));
-                if prev.0 < test.0 { prev = test; }
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Dash(Vector2::new(0.0, 1.0)));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Dash(Vector2::new(0.0, -1.0)));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, 0.0)));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Dash(Vector2::new(1.0, 0.0)));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, -1.0).normalized()));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, 1.0).normalized()));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Dash(Vector2::new(1.0, -1.0).normalized()));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Dash(Vector2::new(1.0, 1.0).normalized()));
+                }
             }
         };
 
