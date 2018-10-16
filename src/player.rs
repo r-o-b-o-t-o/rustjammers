@@ -22,6 +22,7 @@ pub fn player_side_from_i8(side: i8) -> Option<PlayerSide> {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct Player {
     pub pos:   Vector2,
     pub side:  Option<PlayerSide>,
