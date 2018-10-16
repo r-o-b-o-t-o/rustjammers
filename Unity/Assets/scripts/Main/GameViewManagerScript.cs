@@ -138,8 +138,22 @@ public class GameViewManagerScript : MonoBehaviour
 		
 		epoch(currentGameEngine, (sbyte)inputs[0], (sbyte)inputs[1]);
 		MState = get_state(currentGameEngine);
-		P1Score.text = ""+MState.p1_score;
-		P2Score.text = ""+MState.p2_score;
+		if (MState.p1_score < 10)
+		{
+			P1Score.text = "0"+MState.p1_score;
+		}
+		else
+		{
+			P1Score.text = ""+MState.p1_score;
+		}
+		if (MState.p2_score < 10)
+		{
+			P2Score.text = "0"+MState.p2_score;
+		}
+		else
+		{
+			P2Score.text = ""+MState.p2_score;
+		}
 		P1Transform.position = new Vector3((float)MState.p1_x, P1Transform.position.y,(float)MState.p1_y);
 		P2Transform.position = new Vector3((float)MState.p2_x, P2Transform.position.y,(float)MState.p2_y);
 		if (!frisbeeHeld) {
@@ -201,6 +215,11 @@ public class GameViewManagerScript : MonoBehaviour
 			{
 				wl_p1.text = "Winner";
 				wl_p2.text = "Looser";
+			}
+			if (MState.p2_score == MState.p1_score)
+			{
+				wl_p1.text = "Draw";
+				wl_p2.text = "Draw";
 			}
 		}
 	}
