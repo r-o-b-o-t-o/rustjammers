@@ -1,5 +1,6 @@
 use player::PlayerSide;
 use game_engine::GameEngine;
+use std::time::{Duration, Instant};
 
 #[repr(C)]
 pub struct SharedData {
@@ -16,6 +17,8 @@ pub struct SharedData {
     pub zbee_x:     f64,
     pub zbee_y:     f64,
     pub zbee_held:  i8,
+
+    pub time:       f64,
 }
 
 impl SharedData {
@@ -33,7 +36,9 @@ impl SharedData {
 
             zbee_x:     0.0,
             zbee_y:     0.0,
-            zbee_held:  -1
+            zbee_held:  -1,
+
+            time:       0.0
         }
     }
 
@@ -51,5 +56,6 @@ impl SharedData {
         engine.frisbee.pos.x = self.zbee_x;
         engine.frisbee.pos.y = self.zbee_y;
         engine.frisbee.held_by_player = ::player::player_side_from_i8(self.zbee_held);
+        engine.time = Instant::now();
     }
 }
