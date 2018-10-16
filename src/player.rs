@@ -34,7 +34,7 @@ impl Slide {
         fn sqr_dist(a: &Vector2, b: &Vector2) -> f64 {
             (b.x - a.x).powf(2.0) + (b.y - a.y).powf(2.0)
         }
-        sqr_dist(pos, &self.origin) > sqr_dist(&self.origin, &self.target)
+        sqr_dist(pos, &self.origin) >= sqr_dist(&self.origin, &self.target)
     }
 }
 
@@ -99,5 +99,13 @@ impl Player {
                 dir: dir.normalized(),
             });
         }
+    }
+
+    pub fn dash_to_pos(&mut self, pos: Vector2) {
+        self.slide = Some(Slide {
+            origin: self.pos,
+            target: pos,
+            dir: (pos - self.pos).normalized()
+        });
     }
 }

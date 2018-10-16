@@ -1,3 +1,4 @@
+use vector2::Vector2;
 use frisbee::Frisbee;
 use std::time::Instant;
 use shared_data::SharedData;
@@ -233,6 +234,7 @@ impl GameEngine {
                 let slide = player.slide.unwrap();
                 player.pos += slide.dir * 4.0 * 0.1;
                 if slide.has_reached_goal(&player.pos) {
+                    player.pos = slide.target;
                     player.slide = None;
                 }
             }
@@ -263,6 +265,8 @@ impl GameEngine {
         if goal {
             self.state_of_game = StateOfGame::Start;
             self.start_time = Instant::now();
+            self.players.0.dash_to_pos(Vector2::new(-9.0, 0.0));
+            self.players.1.dash_to_pos(Vector2::new(9.0, 0.0));
         }
     }
 
