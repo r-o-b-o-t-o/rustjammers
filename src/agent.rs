@@ -13,11 +13,33 @@ pub enum AgentType {
     None
 }
 
+#[derive(Clone, Copy)]
 pub enum Intent {
     None,
     Move(Vector2),
     Dash(Vector2),
     Throw(::frisbee::ThrowDirection),
+}
+
+fn simulation(engine: &mut GameEngine, side: PlayerSide, intent: Intent) -> (i8, Intent) {
+
+    let intents = match side {
+        PlayerSide::Left => (intent, Intent::None),
+        PlayerSide::Right => (Intent::None, intent),
+    };
+
+    engine.step(intents);
+
+    for _i in 0..300 {
+        engine.epoch(0, 0);
+    }
+
+    let score = match side {
+        PlayerSide::Left => engine.players.0.score - engine.players.1.score,
+        PlayerSide::Right => engine.players.1.score - engine.players.0.score,
+    };
+
+    (score, intent)
 }
 
 pub fn agent_type_from_i8(side: i8) -> AgentType {
@@ -140,8 +162,35 @@ impl Agent for RandomRolloutAgent {
     fn get_type(&self) -> AgentType{
         AgentType::RandomRollout
     }
-    fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
-        Intent::None
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+        let mut prev = (0, Intent::None);
+        let mut new_game_engine = GameEngine::new();
+        engine.get_engine(&mut new_game_engine);
+
+
+        let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(0.0, 1.0)));
+        if prev.0 < test.0 { prev = test; }
+
+        let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(0.0, -1.0)));
+        if prev.0 < test.0 { prev = test; }
+
+        let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(-1.0, 0.0)));
+        if prev.0 < test.0 { prev = test; }
+
+        let test = simulation(&mut new_game_engine, side, Intent::Move(Vector2::new(1.0, 0.0)));
+        if prev.0 < test.0 { prev = test; }
+
+        let test = simulation(&mut new_game_engine, side, Intent::Throw(::frisbee::ThrowDirection::Up));
+        if prev.0 < test.0 { prev = test; }
+
+        let test = simulation(&mut new_game_engine, side, Intent::Throw(::frisbee::ThrowDirection::Middle));
+        if prev.0 < test.0 { prev = test; }
+
+        let test = simulation(&mut new_game_engine, side, Intent::Throw(::frisbee::ThrowDirection::Down));
+        if prev.0 < test.0 { prev = test; }
+
+
+        prev.1
     }
 }
 

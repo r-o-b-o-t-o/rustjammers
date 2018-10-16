@@ -65,6 +65,17 @@ impl GameEngine {
         }
     }
 
+    pub fn get_engine(&self, new_game_engine: &mut GameEngine) {
+
+        new_game_engine.players = self.players;
+        new_game_engine.agents = (Some(Box::new(RandomAgent {})),Some(Box::new(RandomAgent {})));
+        new_game_engine.frisbee = self.frisbee;
+        new_game_engine.inputs = self.inputs;
+        new_game_engine.time = self.time;
+        new_game_engine.start_time = self.start_time;
+        new_game_engine.state_of_game = self.state_of_game;
+    }
+
     pub fn create_agent_from_type(agent_type: AgentType) -> Box<Agent> {
         match agent_type {
             AgentType::Random =>           Box::new(RandomAgent {}),
