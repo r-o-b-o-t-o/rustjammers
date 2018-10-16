@@ -23,7 +23,7 @@ pub fn player_collision(player: &mut Player) {
     }
     if side < 0.0 {
         if player.pos.x < -WALL_EXT {
-            player.pos.x = -NET;
+            player.pos.x = -WALL_EXT;
         }
         if player.pos.x > -NET {
             player.pos.x = -NET;
@@ -38,6 +38,15 @@ pub fn player_collision(player: &mut Player) {
 }
 
 pub fn player_collides_with_frisbee(player: &Player, frisbee: &Frisbee) -> bool {
+    match frisbee.last_held {
+        Some(last_held) => {
+            if last_held == player.side.unwrap() {
+                return false;
+            }
+        },
+        None => {}
+    };
+
     let player_bounds = Circle {
         center: player.pos,
         radius: 1.0
