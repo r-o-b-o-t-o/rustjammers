@@ -21,7 +21,6 @@ public class P2Random : MonoBehaviour {
 	
 	void TaskOnClick()
 	{
-		Debug.Log("You have clicked the button3!");
 		PlayerType.MyPlayersType.typeP2txt.text = "Random";
 		PlayerType.MyPlayersType.typeP2 = 0;
 	}

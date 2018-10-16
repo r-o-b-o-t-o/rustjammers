@@ -36,10 +36,19 @@ impl Player {
         }
     }
 
+    pub fn get_horizontal_position(&self) -> f64 {
+        self.get_horizontal_aim_direction() * -1.0
+    }
+
     pub fn get_horizontal_aim_direction(&self) -> f64 {
         match self.side {
-            Left => 1.0,
-            Right => -1.0
+            Some(side) => {
+                match side {
+                    PlayerSide::Left => 1.0,
+                    PlayerSide::Right => -1.0,
+                }
+            },
+            None => 0.0
         }
     }
 }

@@ -21,8 +21,6 @@ public class StartGameButton : MonoBehaviour
 	
 	void TaskOnClick()
 	{
-		//Output this to console when the Button is clicked
-		Debug.Log("You have clicked the button!");
 		SceneManager.LoadScene("Main");
 	}
 	

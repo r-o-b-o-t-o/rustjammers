@@ -58,10 +58,14 @@ impl Agent for RandomAgent {
                 if rand < 0.7 {
                     // Throw
                     return Intent::Throw(::frisbee::random_throw_direction());
-                } else if rand < 0.85 {
+                } else if rand < 0.8 {
                     // Dash, throw later
                     let dir = self.get_random_direction();
                     return Intent::Dash(dir);
+                } else if rand < 0.9 {
+                    // Move, throw later
+                    let dir = self.get_random_direction();
+                    return Intent::Move(dir);
                 } else {
                     // Wait, throw later
                 }
@@ -90,7 +94,7 @@ impl Agent for RandomAgent {
 pub struct HumanPlayerAgent {}
 
 impl Agent for HumanPlayerAgent {
-    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+    fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
         Intent::None
     }
 }
@@ -98,7 +102,7 @@ impl Agent for HumanPlayerAgent {
 pub struct RandomRolloutAgent {}
 
 impl Agent for RandomRolloutAgent {
-    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+    fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
         Intent::None
     }
 }
@@ -106,7 +110,7 @@ impl Agent for RandomRolloutAgent {
 pub struct DijkstraAgent {}
 
 impl Agent for DijkstraAgent {
-    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+    fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
         Intent::None
     }
 }
@@ -114,7 +118,7 @@ impl Agent for DijkstraAgent {
 pub struct TabularQLearningAgent {}
 
 impl Agent for TabularQLearningAgent {
-    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+    fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
         Intent::None
     }
 }

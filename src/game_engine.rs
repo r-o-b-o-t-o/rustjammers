@@ -61,7 +61,7 @@ impl GameEngine {
         self.players.1.side = Some(PlayerSide::Right);
 
         self.frisbee.pos.x = 0.0;
-        self.frisbee.pos.y = 0.0;
+        self.frisbee.pos.y = 4.0;
         self.frisbee.direction.x = 0.0;
         self.frisbee.direction.y = 0.0;
         self.frisbee.speed = 0.0;
@@ -83,9 +83,12 @@ impl GameEngine {
         let mut a2 = self.agents.1.take().unwrap();
 
         let action_p1 = a1.act(PlayerSide::Left, self);
-        let action_p2 = a2.act(PlayerSide::Left, self);
+        let action_p2 = a2.act(PlayerSide::Right, self);
 
-        self.agents = (Some(a1), Some(a2));
+        self.agents = (
+            Some(a1),
+            Some(a2)
+        );
 
         self.step((
             action_p1,
@@ -134,6 +137,13 @@ impl GameEngine {
                     frisbee.speed = 1.0;
                 }
             };
+
+            match frisbee.held_by_player {
+                None if ::collision::player_collides_with_frisbee(player, frisbee) => {
+                    frisbee.held_by_player = player.side;
+                },
+                _ => {}
+            };
         }
         apply_action(&mut self.players.0, &mut self.frisbee, &intents.0);
         apply_action(&mut self.players.1, &mut self.frisbee, &intents.1);
@@ -141,10 +151,9 @@ impl GameEngine {
         match self.frisbee.held_by_player {
             Some(held_by) => {
                 match held_by {
-                    // Snap to player.
-                    // TODO: add an offset to make it look like it snaps on hands.
-                    Left => self.frisbee.pos = self.players.0.pos,
-                    Right => self.frisbee.pos = self.players.1.pos
+                    // Snap frisbee to player hands
+                    PlayerSide::Left => self.frisbee.pos = self.players.0.pos,
+                    PlayerSide::Right => self.frisbee.pos = self.players.1.pos
                 };
             },
             None => {
@@ -154,7 +163,6 @@ impl GameEngine {
             },
         };
 
-        // TODO: handle frisbee catch
         // TODO: handle player-wall collisions
         // TODO: handle frisbee-wall collisions
         // TODO: handle frisbee-goal collisions

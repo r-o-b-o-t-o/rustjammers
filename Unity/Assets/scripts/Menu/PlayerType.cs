@@ -26,11 +26,4 @@ public class PlayerType : MonoBehaviour
 		typeP1 = 1;
 		typeP2 = 0;
 	}
-
-	// Update is called once per frame
-	void Update ()
-	{
-		Debug.Log(typeP1);
-		Debug.Log(typeP2);
-	}
 }

@@ -19,8 +19,6 @@ public class StartGame : MonoBehaviour
 	
 	void TaskOnClick()
 	{
-		Debug.Log("You have clicked the button!");
-
 		SceneManager.LoadScene("Main");
 	}
 

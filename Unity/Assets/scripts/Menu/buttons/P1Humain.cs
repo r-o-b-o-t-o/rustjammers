@@ -22,7 +22,6 @@ public class P1Humain : MonoBehaviour {
 	
 	void TaskOnClick()
 	{
-		Debug.Log("You have clicked the button4!");
 		PlayerType.MyPlayersType.typeP1txt.text = "Human";
 		PlayerType.MyPlayersType.typeP1 = 1;
 	}
