@@ -1,6 +1,6 @@
 use player::Player;
 use frisbee::Frisbee;
-
+use game_engine::StateOfGame;
 use std::mem::transmute;
 
 pub struct SharedData {
@@ -15,7 +15,9 @@ pub struct SharedData {
     pub zbee_x:     f64,
     pub zbee_y:     f64,
 
-    pub time :      u64,
+    pub time:      u64,
+
+    pub state_of_game:StateOfGame,
 }
 
 pub struct GameState {
@@ -59,5 +61,6 @@ impl GameState {
         self.frisbee.direction.y = 0.0;
         self.frisbee.speed = 0.0;
         self.time=0.0;
+        self.state_of_game= StateOfGame::Start;
     }
 }

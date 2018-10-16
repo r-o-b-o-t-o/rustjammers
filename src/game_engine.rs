@@ -12,7 +12,19 @@ pub struct GameEngine {
     pub agents:  (Option<Box<Agent>>, Option<Box<Agent>>),
     pub frisbee: Frisbee,
     pub inputs: (i8, i8),
-    pub time:	Instant
+    pub time:	Instant,
+    pub state_of_game:	StateOfGame,
+}
+
+#[derive(Copy,Clone)]
+pub enum StateOfGame{
+    Start,
+    Playing,
+    End,
+}
+
+pub fn state_to_i8(state: &StateOfGame) -> i8 {
+	*state as i8
 }
 
 impl GameEngine {
@@ -42,6 +54,7 @@ impl GameEngine {
                 0,
             ),
             time:Instant::now(),
+            state_of_game:StateOfGame::Start,
         }
     }
 
@@ -75,6 +88,8 @@ impl GameEngine {
         self.frisbee.speed = 0.0;
 
         self.time = Instant::now();
+
+        self.state_of_game = StateOfGame::Start;
     }
 
     #[no_mangle]
@@ -215,5 +230,7 @@ impl GameEngine {
         shared.zbee_held = ::player::player_side_to_i8(self.frisbee.held_by_player);
 
         shared.time = 60.0-(self.time.elapsed().as_secs()) as f64;
+
+        shared.state_of_game = state_to_i8(&self.state_of_game);
     }
 }

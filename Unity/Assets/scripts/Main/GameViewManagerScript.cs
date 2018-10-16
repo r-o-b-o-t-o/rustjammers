@@ -39,6 +39,8 @@ public class GameViewManagerScript : MonoBehaviour
 		public sbyte zbee_held;
 
 		public double time;
+
+		public sbyte State;
 	}
 
 	private ManagedState MState;
@@ -88,6 +90,7 @@ public class GameViewManagerScript : MonoBehaviour
 		send_type_p1(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP1);
 		send_type_p2(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP2);
 		Debug.Log(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff") + " - Engine ready [" + currentGameEngine + "].");
+		Debug.Log(MState.State);
 	}
 
 	private void CollectInput(int index) {
