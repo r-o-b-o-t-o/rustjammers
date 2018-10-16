@@ -7,7 +7,8 @@ pub struct Frisbee {
     pub pos:            Vector2,
     pub direction:      Vector2,
     pub speed:          f64,
-    pub held_by_player: Option<PlayerSide>
+    pub held_by_player: Option<PlayerSide>,
+    pub last_held:      Option<PlayerSide>,
 }
 
 pub enum ThrowDirection {
@@ -31,7 +32,8 @@ impl Frisbee {
             pos:            Vector2::zero(),
             direction:      Vector2::zero(),
             speed:          0.0,
-            held_by_player: None
+            held_by_player: None,
+            last_held:      None
         }
     }
 }

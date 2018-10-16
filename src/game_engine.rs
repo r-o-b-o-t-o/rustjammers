@@ -132,25 +132,32 @@ impl GameEngine {
                     player.pos.y += dir.y * 0.5;
                 },
                 Intent::Throw(dir) => {
-                    use frisbee::ThrowDirection;
+                    match frisbee.held_by_player {
+                        Some(held_by) if held_by == player.side.unwrap() => {
+                            use frisbee::ThrowDirection;
 
-                    let horizontal = player.get_horizontal_aim_direction();
-                    frisbee.direction = match dir {
-                        ThrowDirection::Up => {
-                            let mut dir = Vector2::new(horizontal, -1.0);
-                            dir.normalize();
-                            dir
+                            let horizontal = player.get_horizontal_aim_direction();
+                            frisbee.direction = match dir {
+                                ThrowDirection::Up => {
+                                    let mut dir = Vector2::new(horizontal, 1.0);
+                                    dir.normalize();
+                                    dir
+                                },
+                                ThrowDirection::Middle => {
+                                    Vector2::new(horizontal, 0.0)
+                                },
+                                ThrowDirection::Down => {
+                                    let mut dir = Vector2::new(horizontal, -1.0);
+                                    dir.normalize();
+                                    dir
+                                }
+                            };
+                            frisbee.speed = 2.0;
+                            frisbee.last_held = frisbee.held_by_player;
+                            frisbee.held_by_player = None;
                         },
-                        ThrowDirection::Middle => {
-                            Vector2::new(horizontal, 0.0)
-                        },
-                        ThrowDirection::Down => {
-                            let mut dir = Vector2::new(horizontal, 1.0);
-                            dir.normalize();
-                            dir
-                        }
+                        _ => {}
                     };
-                    frisbee.speed = 1.0;
                 }
             };
 
