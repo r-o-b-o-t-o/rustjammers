@@ -61,7 +61,7 @@ impl GameEngine {
         self.players.1.side = Some(PlayerSide::Right);
 
         self.frisbee.pos.x = 0.0;
-        self.frisbee.pos.y = 4.0;
+        self.frisbee.pos.y = -4.0;
         self.frisbee.direction.x = 0.0;
         self.frisbee.direction.y = 0.0;
         self.frisbee.speed = 0.0;
@@ -163,31 +163,8 @@ impl GameEngine {
             },
         };
 
-        // TODO: handle player-wall collisions
-
-        fn player_collision(player: &mut Player)
-        {
-            let side = match player.side {
-                Some(PlayerSide::Left) => -1.0,
-                Some(PlayerSide::Right) => 1.0,
-                None => panic!("Something went wrong in player collision")
-            };
-
-            if player.pos.x < (side * 9.4) {
-                player.pos.x = side * 9.4;
-            }
-            if player.pos.x > (side * 0.1) {
-                player.pos.x = side * 0.1;
-            }
-            if player.pos.y > 4.4 {
-                player.pos.y = 4.4;
-            }
-            if player.pos.y < -4.4 {
-                player.pos.y = -4.4;
-            }
-        }
-        player_collision(&mut self.players.0);
-        player_collision(&mut self.players.1);
+        ::collision::player_collision(&mut self.players.0);
+        ::collision::player_collision(&mut self.players.1);
 
         // TODO: handle frisbee-wall collisions
         // TODO: handle frisbee-goal collisions

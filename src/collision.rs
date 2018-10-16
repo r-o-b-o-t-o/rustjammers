@@ -1,6 +1,6 @@
-use player::Player;
 use frisbee::Frisbee;
 use vector2::Vector2;
+use player::{ Player, PlayerSide };
 
 struct Rect {
     pub pos: Vector2,
@@ -10,6 +10,23 @@ struct Rect {
 struct Circle {
     pub center: Vector2,
     pub radius: f64
+}
+
+pub fn player_collision(player: &mut Player) {
+    let side = player.get_horizontal_position();
+
+    if player.pos.x < (side * 9.4) {
+        player.pos.x = side * 9.4;
+    }
+    if player.pos.x > (side * 0.1) {
+        player.pos.x = side * 0.1;
+    }
+    if player.pos.y > 4.4 {
+        player.pos.y = 4.4;
+    }
+    if player.pos.y < -4.4 {
+        player.pos.y = -4.4;
+    }
 }
 
 pub fn player_collides_with_frisbee(player: &Player, frisbee: &Frisbee) -> bool {
