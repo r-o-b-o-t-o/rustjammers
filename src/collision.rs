@@ -15,11 +15,21 @@ struct Circle {
 pub fn player_collision(player: &mut Player) {
     let side = player.get_horizontal_position();
 
-    if player.pos.x < (side * 9.4) {
-        player.pos.x = side * 9.4;
+    if side == 1.0 {
+        if player.pos.x > 9.4 {
+            player.pos.x = 9.4;
+        }
+        if player.pos.x <  0.1 {
+            player.pos.x = 0.1;
+        }
     }
-    if player.pos.x > (side * 0.1) {
-        player.pos.x = side * 0.1;
+    if side == -1.0 {
+        if player.pos.x < -9.4 {
+            player.pos.x = -9.4;
+        }
+        if player.pos.x > -0.1 {
+            player.pos.x = -0.1;
+        }
     }
     if player.pos.y > 4.4 {
         player.pos.y = 4.4;
