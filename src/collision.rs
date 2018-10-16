@@ -1,4 +1,4 @@
-use player::Player;
+use player::{ Player, PlayerSide };
 use frisbee::Frisbee;
 use vector2::Vector2;
 
@@ -37,11 +37,34 @@ pub fn player_collision(player: &mut Player) {
     }
 }
 
-pub fn frisbee_collision(frisbee: &mut Frisbee) {
+pub fn frisbee_collision_wall(frisbee: &mut Frisbee) {
     const WALL_VERTICAL: f64 = 4.4;
 
     if frisbee.pos.y >= WALL_VERTICAL || frisbee.pos.y <= -WALL_VERTICAL {
         frisbee.direction.y *= -1.0;
+    }
+    
+}
+
+pub fn frisbee_collision_goal(frisbee: &mut Frisbee, players: &mut (Player, Player)) {
+    const WALL_EXT: f64 = 9.4;
+
+    if frisbee.pos.x >= WALL_EXT || frisbee.pos.x <= -WALL_EXT {
+        match frisbee.last_held{
+            Some(PlayerSide::Left) => {
+                players.0.score+=1;
+                frisbee.pos = Vector2::new(0.0, -4.0);
+                frisbee.speed = 0.0;
+                frisbee.direction = Vector2::zero();
+            },
+            Some(PlayerSide::Right) => {
+                players.1.score+=1;
+                frisbee.pos = Vector2::new(0.0, -4.0);
+                frisbee.speed = 0.0;
+                frisbee.direction = Vector2::zero();
+            },
+            None => panic!("nobody won")
+        }
     }
     
 }

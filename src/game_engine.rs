@@ -189,9 +189,9 @@ impl GameEngine {
         ::collision::player_collision(&mut self.players.0);
         ::collision::player_collision(&mut self.players.1);
 
-        // TODO: handle frisbee-wall collisions
-        ::collision::frisbee_collision(&mut self.frisbee);
+        ::collision::frisbee_collision_wall(&mut self.frisbee);
         // TODO: handle frisbee-goal collisions
+        ::collision::frisbee_collision_goal(&mut self.frisbee, &mut self.players);
     }
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {
