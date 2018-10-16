@@ -160,6 +160,10 @@ Prefab:
       propertyPath: m_Name
       value: Ground
       objectReference: {fileID: 0}
+    - target: {fileID: 4957241511270726, guid: 084e55fe5b2c54747b2845dae615686d, type: 2}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 084e55fe5b2c54747b2845dae615686d, type: 2}
   m_IsPrefabParent: 0
@@ -629,6 +633,11 @@ Prefab:
       propertyPath: m_Name
       value: Frisbee
       objectReference: {fileID: 0}
+    - target: {fileID: 23332462159716926, guid: 355afa21892eeed419f3ceb6694ea49a,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 874d1d71f669d9a44a9089a746899670, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 355afa21892eeed419f3ceb6694ea49a, type: 2}
   m_IsPrefabParent: 0
