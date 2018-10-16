@@ -6,24 +6,24 @@ using UnityEngine.UI;
 //Esteban
 public class PlayerType : MonoBehaviour
 {
-
-	/*Random
-	 *Human
-	 *Rollout
-	 *Dijkstra
-	 *TabularQLearning
-	 */
+	public enum AgentType {
+		Random = 0,
+		Human = 1,
+		Rollout = 2,
+		Dijkstra = 3,
+		TabularQLearning = 4
+	}
 
 	public static PlayerType MyPlayersType;
-	public sbyte typeP1;
-	public sbyte typeP2;
+	public AgentType typeP1;
+	public AgentType typeP2;
 	public Text typeP1txt;
 	public Text typeP2txt;
 	
 	void Start ()
 	{
 		MyPlayersType = this;
-		typeP1 = 1;
-		typeP2 = 0;
+		typeP1 = AgentType.Human;
+		typeP2 = AgentType.Random;
 	}
 }

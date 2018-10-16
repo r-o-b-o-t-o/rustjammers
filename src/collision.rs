@@ -2,12 +2,6 @@ use player::Player;
 use frisbee::Frisbee;
 use vector2::Vector2;
 
-#[warn(dead_code)]
-struct Rect {
-    pub pos: Vector2,
-    pub size: Vector2
-}
-
 struct Circle {
     pub center: Vector2,
     pub radius: f64

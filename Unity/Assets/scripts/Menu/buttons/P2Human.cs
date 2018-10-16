@@ -22,6 +22,6 @@ public class P2Human : MonoBehaviour {
 	void TaskOnClick()
 	{
 		PlayerType.MyPlayersType.typeP2txt.text = "Human";
-		PlayerType.MyPlayersType.typeP2 = 1;
+		PlayerType.MyPlayersType.typeP2 = PlayerType.AgentType.Human;
 	}
 }

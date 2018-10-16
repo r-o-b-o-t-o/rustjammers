@@ -23,6 +23,6 @@ public class P1Humain : MonoBehaviour {
 	void TaskOnClick()
 	{
 		PlayerType.MyPlayersType.typeP1txt.text = "Human";
-		PlayerType.MyPlayersType.typeP1 = 1;
+		PlayerType.MyPlayersType.typeP1 = PlayerType.AgentType.Human;
 	}
 }

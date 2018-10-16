@@ -49,7 +49,7 @@ public class GameViewManagerScript : MonoBehaviour
 	static extern IntPtr initialize();
 	
 	[DllImport("rustjammers_engine")]
-	static extern void epoch(IntPtr gameEngine);
+	static extern void epoch(IntPtr gameEngine, sbyte p1_h_action, sbyte p2_h_action);
 	
 	[DllImport("rustjammers_engine")]
 	static extern ManagedState get_state(IntPtr gameEngine);
@@ -59,12 +59,22 @@ public class GameViewManagerScript : MonoBehaviour
 	
 	[DllImport("rustjammers_engine")]
 	static extern void dispose(IntPtr gameEngine);
-	
-	//[DllImport("rustjammers_engine")]
-	//static extern void sendInput(double x,double y,bool dash);
 
 	private IntPtr currentGameEngine;
+
+	private HumanInput[] inputs = new HumanInput[2];
 	
+	[Flags]
+	public enum HumanInput
+	{
+		Idle = 0,
+		Up = 1,
+		Down = 2,
+		Left = 4,
+		Right = 8,
+		Dash = 16,
+		Throw = 32,
+	}
 	
 	void Start()
 	{
@@ -72,14 +82,45 @@ public class GameViewManagerScript : MonoBehaviour
 		currentGameEngine = initialize();
 		reset(currentGameEngine);
 		MState =new ManagedState();
-		send_type_p1(currentGameEngine, PlayerType.MyPlayersType.typeP1);
-		send_type_p2(currentGameEngine, PlayerType.MyPlayersType.typeP2);
+		send_type_p1(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP1);
+		send_type_p2(currentGameEngine, (sbyte)PlayerType.MyPlayersType.typeP2);
 		Debug.Log(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff") + " - Engine ready [" + currentGameEngine + "].");
 	}
+
+	private void CollectInput(int index) {
+		var inputManagerIndex = (index + 1).ToString();
+
+		var horizontal = Input.GetAxisRaw("P" + inputManagerIndex + "Horizontal");
+		if (horizontal < 0.0) {
+			inputs[index] |= HumanInput.Left;
+		} else if (horizontal > 0.0) {
+			inputs[index] |= HumanInput.Right;
+		}
+
+		var vertical = Input.GetAxisRaw("P" + inputManagerIndex + "Vertical");
+		if (vertical < 0.0) {
+			inputs[index] |= HumanInput.Down;
+		} else if (vertical > 0.0) {
+			inputs[index] |= HumanInput.Up;
+		}
+
+		Debug.Log("index: " + index + ", " + " input manager key: " + ("P" + inputManagerIndex + "Horizontal") + ", " + inputs[index]);
+	}
 	
-	void Update ()
-	{
-		epoch(currentGameEngine);
+	void Update () {
+		inputs[0] = HumanInput.Idle;
+		inputs[1] = HumanInput.Idle;
+
+		if (PlayerType.MyPlayersType.typeP1 == PlayerType.AgentType.Human)
+		{
+			CollectInput(0);
+		}
+		if (PlayerType.MyPlayersType.typeP2 == PlayerType.AgentType.Human)
+		{
+			CollectInput(1);
+		}
+		
+		epoch(currentGameEngine, (sbyte)inputs[0], (sbyte)inputs[1]);
 		MState = get_state(currentGameEngine);
 		P1Score.text = ""+MState.p1_score;
 		P2Score.text = ""+MState.p2_score;
@@ -104,19 +145,6 @@ public class GameViewManagerScript : MonoBehaviour
 		if (!frisbeeHeld) {
 			FrisbeeTransform.position = new Vector3((float)MState.zbee_x, P2Transform.position.y,(float)MState.zbee_y);
 		}
-		/*
-			if (PlayerType.MyPlayersType.typeP1 == 0 || PlayerType.MyPlayersType.typeP2 == 0)
-			{
-				bool dashed = false;
-				double moveHorizontal = Input.GetAxis ("Horizontal");
-				double moveVertical = Input.GetAxis ("Vertical");
-				if (Input.GetKeyDown("space"))
-				{
-					dashed = true;
-				}
-				sendInput(moveHorizontal,moveVertical,dashed);
-			}
-		*/
 	}
 
 
