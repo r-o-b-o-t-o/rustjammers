@@ -2,21 +2,22 @@ use frisbee::Frisbee;
 use std::time::Instant;
 use shared_data::SharedData;
 use player::{ Player, PlayerSide };
-use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRolloutAgent, DijkstraAgent, TabularQLearningAgent };
+use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRolloutAgent, DijkstraAgent, TabularQLearningAgent, HumanIntent };
 
 use rand::Rng;
 use std::mem::transmute;
 
-const MAX_ROUND_POINTS: i8       = 30;
-const MAX_ROUND_TIME: f64        = 60.0;
-const INITIAL_THROW_TIME: f64    = 2.0;
-const INITIAL_FRISBEE_SPEED: f64 = 2.0;
+pub const MAX_ROUND_POINTS: i8       = 30;
+pub const MAX_ROUND_TIME: f64        = 60.0;
+pub const INITIAL_THROW_TIME: f64    = 2.0;
+pub const INITIAL_FRISBEE_SPEED: f64 = 2.0;
+pub const PLAYER_DASH_POWER: f64     = 2.5;
 
 pub struct GameEngine {
     pub players:       (Player, Player),
     pub agents:        (Option<Box<Agent>>, Option<Box<Agent>>),
     pub frisbee:       Frisbee,
-    pub inputs:        (i8, i8),
+    pub inputs:        (HumanIntent, HumanIntent),
     pub time:          Instant,
     pub start_time:    Instant,
     pub state_of_game: StateOfGame,
@@ -56,8 +57,8 @@ impl GameEngine {
             ),
             frisbee: Frisbee::new(),
             inputs: (
-                0,
-                0,
+                HumanIntent::IDLE,
+                HumanIntent::IDLE,
             ),
             time: Instant::now(),
             start_time: Instant::now(),
@@ -66,7 +67,6 @@ impl GameEngine {
     }
 
     pub fn get_engine(&self, new_game_engine: &mut GameEngine) {
-
         new_game_engine.players = self.players;
         new_game_engine.agents = (Some(Box::new(RandomAgent {})),Some(Box::new(RandomAgent {})));
         new_game_engine.frisbee = self.frisbee;
@@ -122,18 +122,18 @@ impl GameEngine {
     }
 
     #[no_mangle]
-    pub extern fn epoch(&mut self, p1_h_action: i8, p2_h_action: i8) {
+    pub extern fn epoch(&mut self, p1_h_action: HumanIntent, p2_h_action: HumanIntent) {
         let mut a1 = self.agents.0.take().unwrap();
         let mut a2 = self.agents.1.take().unwrap();
 
         let input1 = match a1.get_type() { 
             AgentType::HumanPlayer => p1_h_action,
-            _ => 0
+            _ => HumanIntent::IDLE
         };
 
         let input2 = match a2.get_type() {
             AgentType::HumanPlayer => p2_h_action,
-            _ => 0
+            _ => HumanIntent::IDLE
         };
 
         self.inputs = (input1, input2);
@@ -197,17 +197,18 @@ impl GameEngine {
             match intent {
                 Intent::None => {},
                 Intent::Move(dir) => {
-                    match frisbee.held_by_player {
-                        Some(held_by) if held_by == player.side.unwrap() => {},
-                        _ => {
-                            player.pos += *dir * 0.1;
-                        }
-                    };
+                    if player.slide.is_none() {
+                        match frisbee.held_by_player {
+                            Some(held_by) if held_by == player.side.unwrap() => {},
+                            _ => {
+                                player.pos += *dir * 0.1;
+                            }
+                        };
+                    }
                 },
                 Intent::Dash(dir) => {
-                    // TODO: accelerate instead of teleport
-                    player.pos.x += dir.x * 0.5;
-                    player.pos.y += dir.y * 0.5;
+                    let dir = dir.normalized();
+                    player.dash(dir * PLAYER_DASH_POWER);
                 },
                 Intent::Throw(dir) => {
                     match frisbee.held_by_player {
@@ -228,6 +229,13 @@ impl GameEngine {
                 },
                 _ => {}
             };
+            if player.slide.is_some() {
+                let slide = player.slide.unwrap();
+                player.pos += slide.dir * 4.0 * 0.1;
+                if slide.has_reached_goal(&player.pos) {
+                    player.slide = None;
+                }
+            }
         }
         apply_action(&mut self.players.0, &mut self.frisbee, &intents.0);
         apply_action(&mut self.players.1, &mut self.frisbee, &intents.1);
