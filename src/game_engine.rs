@@ -194,7 +194,7 @@ impl GameEngine {
             self.frisbee.speed = INITIAL_FRISBEE_SPEED;
         }
 
-        fn apply_action(player: &mut Player, frisbee: &mut Frisbee, intent: &Intent) {
+        fn apply_action(player: &mut Player, frisbee: &mut Frisbee, intent: &Intent, state_of_game: &StateOfGame) {
             match intent {
                 Intent::None => {},
                 Intent::Move(dir) => {
@@ -224,12 +224,14 @@ impl GameEngine {
                 }
             };
 
-            match frisbee.held_by_player {
-                None if ::collision::player_collides_with_frisbee(player, frisbee) => {
-                    frisbee.held_by_player = player.side;
-                },
-                _ => {}
-            };
+            if *state_of_game == StateOfGame::Playing {
+                match frisbee.held_by_player {
+                    None if ::collision::player_collides_with_frisbee(player, frisbee) => {
+                        frisbee.held_by_player = player.side;
+                    },
+                    _ => {}
+                };
+            }
             if player.slide.is_some() {
                 let slide = player.slide.unwrap();
                 player.pos += slide.dir * 4.0 * 0.1;
@@ -239,8 +241,8 @@ impl GameEngine {
                 }
             }
         }
-        apply_action(&mut self.players.0, &mut self.frisbee, &intents.0);
-        apply_action(&mut self.players.1, &mut self.frisbee, &intents.1);
+        apply_action(&mut self.players.0, &mut self.frisbee, &intents.0, &self.state_of_game);
+        apply_action(&mut self.players.1, &mut self.frisbee, &intents.1, &self.state_of_game);
 
         match self.frisbee.held_by_player {
             Some(held_by) => {
