@@ -1,6 +1,6 @@
-use player::{ Player, PlayerSide };
 use frisbee::Frisbee;
 use vector2::Vector2;
+use player::{ Player, PlayerSide };
 
 struct Circle {
     pub center: Vector2,

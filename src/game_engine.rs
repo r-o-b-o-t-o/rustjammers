@@ -8,23 +8,23 @@ use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRoll
 use std::mem::transmute;
 
 pub struct GameEngine {
-    pub players: (Player, Player),
-    pub agents:  (Option<Box<Agent>>, Option<Box<Agent>>),
-    pub frisbee: Frisbee,
-    pub inputs: (i8, i8),
-    pub time:	Instant,
-    pub state_of_game:	StateOfGame,
+    pub players:       (Player, Player),
+    pub agents:        (Option<Box<Agent>>, Option<Box<Agent>>),
+    pub frisbee:       Frisbee,
+    pub inputs:        (i8, i8),
+    pub time:          Instant,
+    pub state_of_game: StateOfGame,
 }
 
-#[derive(Copy,Clone)]
-pub enum StateOfGame{
+#[derive(Copy, Clone)]
+pub enum StateOfGame {
     Start,
     Playing,
     End,
 }
 
 pub fn state_to_i8(state: &StateOfGame) -> i8 {
-	*state as i8
+    *state as i8
 }
 
 impl GameEngine {
@@ -215,7 +215,6 @@ impl GameEngine {
         ::collision::player_collision(&mut self.players.1);
 
         ::collision::frisbee_collision_wall(&mut self.frisbee);
-        // TODO: handle frisbee-goal collisions
         ::collision::frisbee_collision_goal(&mut self.frisbee, &mut self.players);
     }
 
@@ -234,7 +233,7 @@ impl GameEngine {
         shared.zbee_y = self.frisbee.pos.y;
         shared.zbee_held = ::player::player_side_to_i8(self.frisbee.held_by_player);
 
-        shared.time = 60.0-(self.time.elapsed().as_secs()) as f64;
+        shared.time = 60.0 - (self.time.elapsed().as_secs()) as f64;
 
         shared.state_of_game = state_to_i8(&self.state_of_game);
     }

@@ -31,7 +31,6 @@ pub fn agent_type_from_i8(side: i8) -> AgentType {
     }
 }
 
-
 pub trait Agent {
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent;
     fn get_type(&self) -> AgentType;
