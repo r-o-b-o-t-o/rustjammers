@@ -1,11 +1,16 @@
-use vector2::Vector2;
 use frisbee::Frisbee;
 use std::time::Instant;
 use shared_data::SharedData;
 use player::{ Player, PlayerSide };
 use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRolloutAgent, DijkstraAgent, TabularQLearningAgent };
 
+use rand::Rng;
 use std::mem::transmute;
+
+const MAX_ROUND_POINTS: i8       = 30;
+const MAX_ROUND_TIME: f64        = 60.0;
+const INITIAL_THROW_TIME: f64    = 2.0;
+const INITIAL_FRISBEE_SPEED: f64 = 2.0;
 
 pub struct GameEngine {
     pub players:       (Player, Player),
@@ -13,6 +18,7 @@ pub struct GameEngine {
     pub frisbee:       Frisbee,
     pub inputs:        (i8, i8),
     pub time:          Instant,
+    pub start_time:    Instant,
     pub state_of_game: StateOfGame,
 }
 
@@ -53,8 +59,9 @@ impl GameEngine {
                 0,
                 0,
             ),
-            time:Instant::now(),
-            state_of_game:StateOfGame::Start,
+            time: Instant::now(),
+            start_time: Instant::now(),
+            state_of_game: StateOfGame::Start,
         }
     }
 
@@ -88,6 +95,7 @@ impl GameEngine {
         self.frisbee.speed = 0.0;
 
         self.time = Instant::now();
+        self.start_time = Instant::now();
 
         self.state_of_game = StateOfGame::Start;
     }
@@ -140,12 +148,40 @@ impl GameEngine {
     }
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
-    	if self.players.0.score>=30 || self.players.1.score <= 30 || 60.0 - (self.time.elapsed().as_secs()) as f64 <= 0.0{
-    		self.state_of_game= StateOfGame::End;
-    	}
-    	if self.state_of_game==StateOfGame::End{
-    		return;
-    	}
+        if self.state_of_game == StateOfGame::Playing && (
+            self.players.0.score >= MAX_ROUND_POINTS ||
+            self.players.1.score >= MAX_ROUND_POINTS ||
+            self.get_time() <= 0.0) {
+            self.state_of_game = StateOfGame::End;
+        }
+        if self.state_of_game == StateOfGame::End {
+            return;
+        }
+        if self.state_of_game == StateOfGame::Start && self.get_start_time() <= 0.0 {
+            self.state_of_game = StateOfGame::Playing;
+
+            let mut rng = ::rand::thread_rng();
+            let target = match self.frisbee.last_held {
+                Some(ref last_held) => {
+                    match last_held {
+                        PlayerSide::Left => &self.players.0,
+                        PlayerSide::Right => &self.players.1,
+                    }
+                },
+                None => {
+                    if rng.gen_range(0.0, 1.0) < 0.5 {
+                        self.frisbee.last_held = Some(PlayerSide::Right);
+                        &self.players.1
+                    } else {
+                        self.frisbee.last_held = Some(PlayerSide::Left);
+                        &self.players.0
+                    }
+                },
+            };
+            self.frisbee.direction = target.get_throw_vector(&::frisbee::ThrowDirection::Up);
+            self.frisbee.speed = INITIAL_FRISBEE_SPEED;
+        }
+
         fn apply_action(player: &mut Player, frisbee: &mut Frisbee, intent: &Intent) {
             match intent {
                 Intent::None => {},
@@ -165,25 +201,8 @@ impl GameEngine {
                 Intent::Throw(dir) => {
                     match frisbee.held_by_player {
                         Some(held_by) if held_by == player.side.unwrap() => {
-                            use frisbee::ThrowDirection;
-
-                            let horizontal = player.get_horizontal_aim_direction();
-                            frisbee.direction = match dir {
-                                ThrowDirection::Up => {
-                                    let mut dir = Vector2::new(horizontal, 1.0);
-                                    dir.normalize();
-                                    dir
-                                },
-                                ThrowDirection::Middle => {
-                                    Vector2::new(horizontal, 0.0)
-                                },
-                                ThrowDirection::Down => {
-                                    let mut dir = Vector2::new(horizontal, -1.0);
-                                    dir.normalize();
-                                    dir
-                                }
-                            };
-                            frisbee.speed = 2.0;
+                            frisbee.direction = player.get_throw_vector(dir);
+                            frisbee.speed = INITIAL_FRISBEE_SPEED;
                             frisbee.last_held = frisbee.held_by_player;
                             frisbee.held_by_player = None;
                         },
@@ -221,7 +240,23 @@ impl GameEngine {
         ::collision::player_collision(&mut self.players.1);
 
         ::collision::frisbee_collision_wall(&mut self.frisbee);
-        ::collision::frisbee_collision_goal(&mut self.frisbee, &mut self.players);
+        let goal = ::collision::frisbee_collision_goal(&mut self.frisbee, &mut self.players);
+        if goal {
+            self.state_of_game = StateOfGame::Start;
+            self.start_time = Instant::now();
+        }
+    }
+
+    pub fn get_time(&self) -> f64 {
+        let time_start = MAX_ROUND_TIME;
+        let elapsed = self.time.elapsed();
+        time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
+    }
+
+    pub fn get_start_time(&self) -> f64 {
+        let time_start = INITIAL_THROW_TIME;
+        let elapsed = self.start_time.elapsed();
+        time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
     }
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {
@@ -239,7 +274,7 @@ impl GameEngine {
         shared.zbee_y = self.frisbee.pos.y;
         shared.zbee_held = ::player::player_side_to_i8(self.frisbee.held_by_player);
 
-        shared.time = 60.0 - (self.time.elapsed().as_secs()) as f64;
+        shared.time = self.get_time();
 
         shared.state_of_game = state_to_i8(&self.state_of_game);
     }

@@ -46,7 +46,7 @@ pub fn frisbee_collision_wall(frisbee: &mut Frisbee) {
     
 }
 
-pub fn frisbee_collision_goal(frisbee: &mut Frisbee, players: &mut (Player, Player)) {
+pub fn frisbee_collision_goal(frisbee: &mut Frisbee, players: &mut (Player, Player)) -> bool {
     const WALL_EXT: f64 = 9.4 + 0.5;
     const FIVE_POINTS_START: f64 = 3.3 / 2.0;
     const FIVE_POINTS_END: f64 = -3.3 / 2.0;
@@ -60,12 +60,14 @@ pub fn frisbee_collision_goal(frisbee: &mut Frisbee, players: &mut (Player, Play
         match frisbee.last_held {
             Some(PlayerSide::Left) => players.0.score += points,
             Some(PlayerSide::Right) => players.1.score += points,
-            None => panic!("Nobody won."),
+            None => return false,
         }
         frisbee.pos = Vector2::new(0.0, -4.0);
         frisbee.speed = 0.0;
         frisbee.direction = Vector2::zero();
+        return true;
     }
+    false
 }
 
 pub fn player_collides_with_frisbee(player: &Player, frisbee: &Frisbee) -> bool {

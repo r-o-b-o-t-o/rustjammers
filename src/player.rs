@@ -1,4 +1,5 @@
 use vector2::Vector2;
+use frisbee::ThrowDirection;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum PlayerSide {
@@ -49,6 +50,25 @@ impl Player {
                 }
             },
             None => 0.0
+        }
+    }
+
+    pub fn get_throw_vector(&self, dir: &ThrowDirection) -> Vector2 {
+        let horizontal = self.get_horizontal_aim_direction();
+        match dir {
+            ThrowDirection::Up => {
+                let mut dir = Vector2::new(horizontal, 1.0);
+                dir.normalize();
+                dir
+            },
+            ThrowDirection::Middle => {
+                Vector2::new(horizontal, 0.0)
+            },
+            ThrowDirection::Down => {
+                let mut dir = Vector2::new(horizontal, -1.0);
+                dir.normalize();
+                dir
+            }
         }
     }
 }
