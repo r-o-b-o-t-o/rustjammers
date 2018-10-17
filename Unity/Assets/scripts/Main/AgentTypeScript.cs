@@ -4,6 +4,7 @@ namespace Main
 {
 	public class AgentTypeScript : MonoBehaviour
 	{
+		// Author: Created by Esteban / Edited by Axel
 		public enum AgentType
 		{
 			Human = 0,

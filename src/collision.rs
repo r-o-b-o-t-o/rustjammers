@@ -8,6 +8,7 @@ struct Circle {
 }
 
 pub fn player_collision(player: &mut Player) -> bool {
+    // Author: Created by Yohann / Edited by Axel
     let side = player.get_horizontal_position();
     let mut collided = false;
     const WALL_EXT: f64 = 9.4;
@@ -47,8 +48,10 @@ pub fn player_collision(player: &mut Player) -> bool {
 }
 
 pub fn frisbee_collision_wall(frisbee: &mut Frisbee) {
+    // Author: Created by Yohann
     const WALL_VERTICAL: f64 = 4.4;
 
+    // TODO: check rebound angles
     if frisbee.pos.y >= WALL_VERTICAL || frisbee.pos.y <= -WALL_VERTICAL {
         frisbee.direction.y *= -1.0;
         if frisbee.pos.y >= WALL_VERTICAL {
@@ -73,6 +76,7 @@ pub fn frisbee_collision_wall(frisbee: &mut Frisbee) {
 }
 
 pub fn frisbee_collision_goal(frisbee: &mut Frisbee, players: &mut (Player, Player)) -> bool {
+    // Author: Created by Yohann / Edited by Axel
     const WALL_EXT: f64 = 9.4 + 0.5;
     const FIVE_POINTS_START: f64 = 3.3 / 2.0;
     const FIVE_POINTS_END: f64 = -3.3 / 2.0;
@@ -97,6 +101,7 @@ pub fn frisbee_collision_goal(frisbee: &mut Frisbee, players: &mut (Player, Play
 }
 
 pub fn player_collides_with_frisbee(player: &Player, frisbee: &Frisbee) -> bool {
+    // Author: Created by Axel
     match frisbee.last_held {
         Some(last_held) => {
             if last_held == player.side.unwrap() {

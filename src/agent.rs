@@ -16,6 +16,7 @@ pub enum AgentType {
 
 #[derive(Clone, Copy)]
 pub enum Intent {
+    // Author: Created by Axel
     None,
     Move(Vector2),
     Dash(Vector2),
@@ -23,6 +24,7 @@ pub enum Intent {
 }
 
 fn simulation(engine: &mut GameEngine, side: &PlayerSide, intent: Intent) -> (i8, Intent) {
+    // Author: Created by Yohann
     let intents = match *side {
         PlayerSide::Left => (intent, Intent::None),
         PlayerSide::Right => (Intent::None, intent),
@@ -46,6 +48,7 @@ fn simulation(engine: &mut GameEngine, side: &PlayerSide, intent: Intent) -> (i8
 }
 
 pub fn agent_type_from_i8(side: i8) -> AgentType {
+    // Author: Created by Axel
     match side {
         0 => AgentType::HumanPlayer,
         1 => AgentType::Random,
@@ -57,6 +60,7 @@ pub fn agent_type_from_i8(side: i8) -> AgentType {
 }
 
 pub trait Agent {
+    // Author: Created by Axel
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent;
     fn get_type(&self) -> AgentType;
 
@@ -73,7 +77,8 @@ pub trait Agent {
 pub struct RandomAgent {}
 
 impl Agent for RandomAgent {
-    fn get_type(&self) -> AgentType{
+    // Author: Created by Axel
+    fn get_type(&self) -> AgentType {
         AgentType::Random
     }
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
@@ -115,6 +120,7 @@ pub struct HumanPlayerAgent {}
 
 bitflags! {
     pub struct HumanIntent: u8 {
+        // Author: Created by Axel
         const IDLE  = 0;
         const UP    = 1;
         const DOWN  = 2;
@@ -125,7 +131,8 @@ bitflags! {
 }
 
 impl Agent for HumanPlayerAgent {
-    fn get_type(&self) -> AgentType{
+    // Author: Created by Yohann / Edited by Axel
+    fn get_type(&self) -> AgentType {
         AgentType::HumanPlayer
     }
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
@@ -188,7 +195,8 @@ impl Agent for HumanPlayerAgent {
 pub struct RandomRolloutAgent {}
 
 impl Agent for RandomRolloutAgent {
-    fn get_type(&self) -> AgentType{
+    // Author: Created by Yohann / Edited by Axel
+    fn get_type(&self) -> AgentType {
         AgentType::RandomRollout
     }
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
@@ -209,7 +217,7 @@ impl Agent for RandomRolloutAgent {
         }
 
 
-        for _i in 0..3 {
+        for _ in 0..3 {
             match engine.frisbee.held_by_player {
                 Some(held_by) if held_by == side => {
                     // If the agent holds the frisbee
@@ -254,7 +262,7 @@ impl Agent for RandomRolloutAgent {
 pub struct DijkstraAgent {}
 
 impl Agent for DijkstraAgent {
-    fn get_type(&self) -> AgentType{
+    fn get_type(&self) -> AgentType {
         AgentType::Dijkstra
     }
     fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
@@ -265,7 +273,7 @@ impl Agent for DijkstraAgent {
 pub struct TabularQLearningAgent {}
 
 impl Agent for TabularQLearningAgent {
-    fn get_type(&self) -> AgentType{
+    fn get_type(&self) -> AgentType {
         AgentType::TabularQLearning
     }
     fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {

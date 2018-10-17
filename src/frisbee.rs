@@ -5,6 +5,7 @@ use rand::Rng;
 
 #[derive(Clone, Copy)]
 pub struct Frisbee {
+    // Author: Created by Axel
     pub pos:            Vector2,
     pub direction:      Vector2,
     pub speed:          f64,
@@ -22,6 +23,7 @@ pub enum ThrowDirection {
 }
 
 pub fn random_throw_direction() -> ThrowDirection {
+    // Author: Created by Axel
     let mut rng = ::rand::thread_rng();
     match rng.gen_range(0, 5) {
         0 => ThrowDirection::Up,
@@ -34,6 +36,7 @@ pub fn random_throw_direction() -> ThrowDirection {
 
 impl Frisbee {
     pub fn new() -> Self {
+        // Author: Created by Axel
         Self {
             pos:            Vector2::zero(),
             direction:      Vector2::zero(),

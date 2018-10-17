@@ -1,9 +1,10 @@
 use std::time::Instant;
 use player::PlayerSide;
-use game_engine::{ GameEngine, StateOfGame };
+use game_engine::GameEngine;
 
 #[repr(C)]
 pub struct SharedData {
+    // Author: Created by Yohann / Edited by all
     pub p1_x:          f64,
     pub p1_y:          f64,
     pub p1_score:      i8,
@@ -24,6 +25,7 @@ pub struct SharedData {
 
 impl SharedData {
     pub fn new() -> Self {
+        // Author: Created by Yohann
         Self {
             p1_x:          0.0,
             p1_y:          0.0,
@@ -45,15 +47,8 @@ impl SharedData {
         }
     }
 
-    pub fn state_from_i8(state: i8) -> StateOfGame {
-        match state {
-            0 => StateOfGame::Start,
-            1 => StateOfGame::Playing,
-            _ => StateOfGame::End,
-        }
-    }
-
     pub fn to_game_engine(self, engine: &mut GameEngine) {
+        // Author: Created by Yohann / Edited by all
         engine.players.0.pos.x = self.p1_x;
         engine.players.0.pos.y = self.p1_y;
         engine.players.0.score = self.p1_score;
@@ -70,6 +65,6 @@ impl SharedData {
         
         engine.time = Instant::now();
 
-        engine.state_of_game = Self::state_from_i8(self.state_of_game);
+        engine.state_of_game = ::game_engine::state_from_i8(self.state_of_game);
     }
 }

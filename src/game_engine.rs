@@ -15,6 +15,7 @@ pub const INITIAL_FRISBEE_SPEED: f64 = 2.5;
 pub const PLAYER_DASH_POWER: f64     = 2.5;
 
 pub struct GameEngine {
+    // Author: Created by Axel / Edited by all
     pub players:       (Player, Player),
     pub agents:        (Option<Box<Agent>>, Option<Box<Agent>>),
     pub frisbee:       Frisbee,
@@ -26,27 +27,41 @@ pub struct GameEngine {
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum StateOfGame {
+    // Author: Created by Esteban
     Start,
     Playing,
     End,
 }
 
 pub fn state_to_i8(state: &StateOfGame) -> i8 {
+    // Author: Created by Esteban
     *state as i8
+}
+
+pub fn state_from_i8(state: i8) -> StateOfGame {
+    // Author: Created by Esteban
+    match state {
+        0 => StateOfGame::Start,
+        1 => StateOfGame::Playing,
+        _ => StateOfGame::End,
+    }
 }
 
 impl GameEngine {
     #[no_mangle]
     pub extern fn initialize() -> *mut Self {
+        // Author: Created by Axel
         unsafe { transmute(Box::new(Self::new())) }
     }
 
     #[no_mangle]
     pub extern fn dispose(ptr: *mut Self) {
+        // Author: Created by Axel
         let _state: Box<Self> = unsafe { transmute(ptr) };
     }
 
     pub fn new() -> Self {
+        // Author: Created by Axel / Edited by all
         Self {
             players: (
                 Player::new(),
@@ -68,6 +83,7 @@ impl GameEngine {
     }
 
     pub fn get_engine(&self, new_game_engine: &mut GameEngine) {
+        // Author: Created by Yohann / Edited by all
         new_game_engine.players = self.players;
         new_game_engine.agents = (Some(Box::new(RandomAgent {})),Some(Box::new(RandomAgent {})));
         new_game_engine.frisbee = self.frisbee;
@@ -78,6 +94,7 @@ impl GameEngine {
     }
 
     pub fn create_agent_from_type(agent_type: AgentType) -> Box<Agent> {
+        // Author: Created by Yohann / Edited by Axel
         match agent_type {
             AgentType::Random =>           Box::new(RandomAgent {}),
             AgentType::HumanPlayer =>      Box::new(HumanPlayerAgent {}),
@@ -90,6 +107,7 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn reset(&mut self) {
+        // Author: Created by Yohann / Edited by all
         self.players.0.pos.x = -9.0;
         self.players.0.pos.y = 0.0;
         self.players.0.score = 0;
@@ -114,16 +132,19 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn send_type_p1(&mut self, agent_type: i8) {
+        // Author: Created by Yohann
         self.agents.0 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type)));
     }
 
     #[no_mangle]
     pub extern fn send_type_p2(&mut self, agent_type: i8) {
+        // Author: Created by Yohann
         self.agents.1 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type)));
     }
 
     #[no_mangle]
     pub extern fn epoch(&mut self, p1_h_action: HumanIntent, p2_h_action: HumanIntent) {
+        // Author: Created by Yohann / Edited by Axel
         let mut a1 = self.agents.0.take().unwrap();
         let mut a2 = self.agents.1.take().unwrap();
 
@@ -154,12 +175,14 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn get_state(&mut self) -> SharedData {
+        // Author: Created by Yohann
         let mut data = SharedData::new();
         self.to_shared_data(&mut data);
         data
     }
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
+        // Author: Created by Yohann / Edited by all
         if self.players.0.score >= MAX_ROUND_POINTS ||
            self.players.1.score >= MAX_ROUND_POINTS ||
            self.get_time() <= 0.0 {
@@ -194,6 +217,7 @@ impl GameEngine {
         }
 
         fn apply_action(player: &mut Player, frisbee: &mut Frisbee, intent: &Intent, state_of_game: &StateOfGame) {
+            // Author: Created by Axel
             match intent {
                 Intent::None => {},
                 Intent::Move(dir) => {
@@ -282,18 +306,21 @@ impl GameEngine {
     }
 
     pub fn get_time(&self) -> f64 {
+        // Author: Created by Esteban
         let time_start = MAX_ROUND_TIME;
         let elapsed = self.time.elapsed();
         time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
     }
 
     pub fn get_start_time(&self) -> f64 {
+        // Author: Created by Axel
         let time_start = INITIAL_THROW_TIME;
         let elapsed = self.start_time.elapsed();
         time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
     }
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {
+        // Author: Created by Yohann / Edited by all
         shared.p1_x = self.players.0.pos.x;
         shared.p1_y = self.players.0.pos.y;
         shared.p1_score = self.players.0.score;

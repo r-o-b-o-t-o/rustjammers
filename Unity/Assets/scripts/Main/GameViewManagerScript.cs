@@ -1,6 +1,4 @@
-﻿//Esteban
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using TMPro;
 using Ui;
@@ -10,6 +8,7 @@ namespace Main
 {
 	public class GameViewManagerScript : MonoBehaviour
 	{
+		// Author: Created by Esteban / Edited by Axel
 		[SerializeField] private Transform p1Transform;
 		[SerializeField] private Transform p1Hands;
 

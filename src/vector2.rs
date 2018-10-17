@@ -1,3 +1,5 @@
+// Author: Created by Axel
+
 use std::ops::{ Mul, MulAssign, Div, DivAssign, Add, AddAssign, Sub, SubAssign };
 
 #[derive(Copy, Clone, PartialEq, Debug)]

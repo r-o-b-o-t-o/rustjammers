@@ -9,6 +9,7 @@ namespace Ui
 {
 	public class MainMenu : MonoBehaviour
 	{
+		// Author: Created by Esteban / Edited by Axel
 		[SerializeField] private string gameScene;
 		[SerializeField] private TMP_Dropdown[] agentDropdowns;
 		[SerializeField] private GameObject[] agentKbds;

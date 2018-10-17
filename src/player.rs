@@ -3,11 +3,13 @@ use frisbee::ThrowDirection;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum PlayerSide {
+    // Author: Created by Axel
     Left = 0,
     Right = 1
 }
 
 pub fn player_side_to_i8(side: Option<PlayerSide>) -> i8 {
+    // Author: Created by Axel
     match side {
         Some(ref side) => *side as i8,
         None => -1
@@ -15,6 +17,7 @@ pub fn player_side_to_i8(side: Option<PlayerSide>) -> i8 {
 }
 
 pub fn player_side_from_i8(side: i8) -> Option<PlayerSide> {
+    // Author: Created by Axel
     match side {
         0 => Some(PlayerSide::Left),
         1 => Some(PlayerSide::Right),
@@ -24,6 +27,7 @@ pub fn player_side_from_i8(side: i8) -> Option<PlayerSide> {
 
 #[derive(Clone, Copy)]
 pub struct Slide {
+    // Author: Created by Axel
     pub target: Vector2,
     pub origin: Vector2,
     pub dir: Vector2,
@@ -31,6 +35,7 @@ pub struct Slide {
 
 impl Slide {
     pub fn has_reached_goal(&self, pos: &Vector2) -> bool {
+        // Author: Created by Axel
         fn sqr_dist(a: &Vector2, b: &Vector2) -> f64 {
             (b.x - a.x).powf(2.0) + (b.y - a.y).powf(2.0)
         }
@@ -40,6 +45,7 @@ impl Slide {
 
 #[derive(Clone, Copy)]
 pub struct Player {
+    // Author: Created by Axel / Edited by Yohann
     pub pos:   Vector2,
     pub side:  Option<PlayerSide>,
     pub score: i8,
@@ -48,6 +54,7 @@ pub struct Player {
 
 impl Player {
     pub fn new() -> Self {
+        // Author: Created by Axel
         Self {
             pos:   Vector2::zero(),
             side:  None,
@@ -57,10 +64,12 @@ impl Player {
     }
 
     pub fn get_horizontal_position(&self) -> f64 {
+        // Author: Created by Axel
         self.get_horizontal_aim_direction() * -1.0
     }
 
     pub fn get_horizontal_aim_direction(&self) -> f64 {
+        // Author: Created by Axel
         match self.side {
             Some(side) => {
                 match side {
@@ -73,6 +82,7 @@ impl Player {
     }
 
     pub fn get_throw_vector(&self, dir: &ThrowDirection) -> Vector2 {
+        // Author: Created by Axel
         let horizontal = self.get_horizontal_aim_direction();
         match dir {
             ThrowDirection::Up => {
@@ -102,6 +112,7 @@ impl Player {
     }
 
     pub fn dash(&mut self, dir: Vector2) {
+        // Author: Created by Axel
         if self.slide.is_none() {
             self.slide = Some(Slide {
                 origin: self.pos,
@@ -112,6 +123,7 @@ impl Player {
     }
 
     pub fn dash_to_pos(&mut self, pos: Vector2) {
+        // Author: Created by Axel
         self.slide = Some(Slide {
             origin: self.pos,
             target: pos,

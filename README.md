@@ -5,7 +5,8 @@ Rust stable minimum 1.27
 
 Scene à lancer au démarrage: Menu.unity
 
-Noms GitHub:
-Kryod:    Yohann  JERRAIN
-Elyrioss: Esteban DUMAS
-robot0:   Axel    COCAT
+| Pseudo GitHub  | Élève          |
+| -------------- | -------------- |
+| Kryod          | Yohann JERRAIN |
+| Elyrioss       | Esteban DUMAS  |
+| robot0         | Axel COCAT     |
