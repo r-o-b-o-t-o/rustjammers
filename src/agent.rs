@@ -32,7 +32,7 @@ fn simulation(engine: &mut GameEngine, side: &PlayerSide, intent: Intent) -> (i8
 
     for _i in 0..1_000 {
         engine.epoch(HumanIntent::IDLE, HumanIntent::IDLE);
-        if engine.state_of_game == StateOfGame::End {
+        if engine.state_of_game != StateOfGame::Playing {
             break;
         }
     }
