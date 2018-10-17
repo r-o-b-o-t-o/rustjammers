@@ -48,5 +48,5 @@ ExportedObj/
 sysinfo.txt
 
 Unity/Assets/Plugins
-*.dll
-*.dll.meta
+rustjammers_engine.dll
+rustjammers_engine.dll.meta
