@@ -6,8 +6,8 @@ use game_engine::GameEngine;
 use rand::Rng;
 
 pub enum AgentType {
-    Random = 0,
-    HumanPlayer,
+    HumanPlayer = 0,
+    Random,
     RandomRollout,
     Dijkstra,
     TabularQLearning,
@@ -44,8 +44,8 @@ fn simulation(engine: &mut GameEngine, side: &PlayerSide, intent: Intent) -> (i8
 
 pub fn agent_type_from_i8(side: i8) -> AgentType {
     match side {
-        0 => AgentType::Random,
-        1 => AgentType::HumanPlayer,
+        0 => AgentType::HumanPlayer,
+        1 => AgentType::Random,
         2 => AgentType::RandomRollout,
         3 => AgentType::Dijkstra,
         4 => AgentType::TabularQLearning,

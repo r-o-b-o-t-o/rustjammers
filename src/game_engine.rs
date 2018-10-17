@@ -11,7 +11,7 @@ use std::mem::transmute;
 pub const MAX_ROUND_POINTS: i8       = 30;
 pub const MAX_ROUND_TIME: f64        = 60.0;
 pub const INITIAL_THROW_TIME: f64    = 2.0;
-pub const INITIAL_FRISBEE_SPEED: f64 = 2.0;
+pub const INITIAL_FRISBEE_SPEED: f64 = 2.5;
 pub const PLAYER_DASH_POWER: f64     = 2.5;
 
 pub struct GameEngine {
@@ -160,11 +160,10 @@ impl GameEngine {
     }
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
-        if self.state_of_game == StateOfGame::Playing && (
-            self.players.0.score >= MAX_ROUND_POINTS ||
-            self.players.1.score >= MAX_ROUND_POINTS ||
-            self.get_time() <= 0.0) {
-            self.state_of_game = StateOfGame::End;
+        if self.players.0.score >= MAX_ROUND_POINTS ||
+           self.players.1.score >= MAX_ROUND_POINTS ||
+           self.get_time() <= 0.0 {
+           self.state_of_game = StateOfGame::End;
         }
         if self.state_of_game == StateOfGame::End {
             return;
