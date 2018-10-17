@@ -197,18 +197,22 @@ impl GameEngine {
             match intent {
                 Intent::None => {},
                 Intent::Move(dir) => {
-                    if player.slide.is_none() {
-                        match frisbee.held_by_player {
-                            Some(held_by) if held_by == player.side.unwrap() => {},
-                            _ => {
-                                player.pos += *dir * 0.1;
-                            }
-                        };
+                    if *state_of_game == StateOfGame::Playing {
+                        if player.slide.is_none() {
+                            match frisbee.held_by_player {
+                                Some(held_by) if held_by == player.side.unwrap() => {},
+                                _ => {
+                                    player.pos += *dir * 0.1;
+                                }
+                            };
+                        }
                     }
                 },
                 Intent::Dash(dir) => {
-                    let dir = dir.normalized();
-                    player.dash(dir * PLAYER_DASH_POWER);
+                    if *state_of_game == StateOfGame::Playing {
+                        let dir = dir.normalized();
+                        player.dash(dir * PLAYER_DASH_POWER);
+                    }
                 },
                 Intent::Throw(dir) => {
                     match frisbee.held_by_player {

@@ -157,9 +157,19 @@ impl Agent for HumanPlayerAgent {
             if has_frisbee {
                 let mut throw_dir = ThrowDirection::Middle;
                 if input.contains(HumanIntent::UP) {
-                    throw_dir = ThrowDirection::Up;
+                    if (input.contains(HumanIntent::RIGHT) && side == PlayerSide::Left) ||
+                       (input.contains(HumanIntent::LEFT) && side == PlayerSide::Right) {
+                        throw_dir = ThrowDirection::LightUp;
+                    } else {
+                        throw_dir = ThrowDirection::Up;
+                    }
                 } else if input.contains(HumanIntent::DOWN) {
-                    throw_dir = ThrowDirection::Down;
+                    if (input.contains(HumanIntent::RIGHT) && side == PlayerSide::Left) ||
+                       (input.contains(HumanIntent::LEFT) && side == PlayerSide::Right) {
+                        throw_dir = ThrowDirection::LightDown;
+                    } else {
+                        throw_dir = ThrowDirection::Down;
+                    }
                 }
                 Intent::Throw(throw_dir)
             } else {
@@ -204,7 +214,9 @@ impl Agent for RandomRolloutAgent {
                 Some(held_by) if held_by == side => {
                     // If the agent holds the frisbee
                     run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Up));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::LightUp));
                     run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Middle));
+                    run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::LightDown));
                     run_simulation(&mut prev, &engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Down));
                 },
                 _ => {

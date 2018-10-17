@@ -80,8 +80,18 @@ impl Player {
                 dir.normalize();
                 dir
             },
+            ThrowDirection::LightUp => {
+                let mut dir = Vector2::new(horizontal * 2.0, 1.0);
+                dir.normalize();
+                dir
+            },
             ThrowDirection::Middle => {
                 Vector2::new(horizontal, 0.0)
+            },
+            ThrowDirection::LightDown => {
+                let mut dir = Vector2::new(horizontal * 2.0, -1.0);
+                dir.normalize();
+                dir
             },
             ThrowDirection::Down => {
                 let mut dir = Vector2::new(horizontal, -1.0);

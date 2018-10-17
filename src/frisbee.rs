@@ -15,15 +15,19 @@ pub struct Frisbee {
 #[derive(Clone, Copy)]
 pub enum ThrowDirection {
     Up = 0,
+    LightUp,
     Middle,
+    LightDown,
     Down,
 }
 
 pub fn random_throw_direction() -> ThrowDirection {
     let mut rng = ::rand::thread_rng();
-    match rng.gen_range(0, 3) {
+    match rng.gen_range(0, 5) {
         0 => ThrowDirection::Up,
-        1 => ThrowDirection::Middle,
+        1 => ThrowDirection::LightUp,
+        2 => ThrowDirection::Middle,
+        3 => ThrowDirection::LightDown,
         _ => ThrowDirection::Down,
     }
 }
