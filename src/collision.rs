@@ -51,6 +51,24 @@ pub fn frisbee_collision_wall(frisbee: &mut Frisbee) {
 
     if frisbee.pos.y >= WALL_VERTICAL || frisbee.pos.y <= -WALL_VERTICAL {
         frisbee.direction.y *= -1.0;
+        if frisbee.pos.y >= WALL_VERTICAL {
+            frisbee.direction = Vector2::new(frisbee.direction.x, -1.0).normalized();
+        }
+
+        if frisbee.pos.y <= -WALL_VERTICAL {
+            frisbee.direction = Vector2::new(frisbee.direction.x, 1.0).normalized();
+        }
+
+        if frisbee.direction == Vector2::new(frisbee.direction.x, 0.0) {
+            if frisbee.pos.y >= WALL_VERTICAL && frisbee.direction.y == 0.0 {
+                frisbee.direction = Vector2::new(frisbee.direction.x, -1.0).normalized();
+            }
+
+            if frisbee.pos.y <= -WALL_VERTICAL && frisbee.direction.y == 0.0 {
+                frisbee.direction = Vector2::new(frisbee.direction.x, 1.0).normalized();
+            }
+
+        }
     }
 }
 
