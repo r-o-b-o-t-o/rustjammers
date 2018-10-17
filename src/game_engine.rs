@@ -175,21 +175,21 @@ impl GameEngine {
             let target = match self.frisbee.last_held {
                 Some(ref last_held) => {
                     match last_held {
-                        PlayerSide::Left => &self.players.0,
-                        PlayerSide::Right => &self.players.1,
+                        PlayerSide::Left => &self.players.1,
+                        PlayerSide::Right => &self.players.0,
                     }
                 },
                 None => {
                     if rng.gen_range(0.0, 1.0) < 0.5 {
                         self.frisbee.last_held = Some(PlayerSide::Right);
-                        &self.players.1
+                        &self.players.0
                     } else {
                         self.frisbee.last_held = Some(PlayerSide::Left);
-                        &self.players.0
+                        &self.players.1
                     }
                 },
             };
-            self.frisbee.direction = target.get_throw_vector(&::frisbee::ThrowDirection::Up);
+            self.frisbee.direction = (target.pos - self.frisbee.pos).normalized();
             self.frisbee.speed = INITIAL_FRISBEE_SPEED;
         }
 
