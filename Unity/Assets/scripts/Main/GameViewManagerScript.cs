@@ -245,8 +245,12 @@ namespace Main
 
 		public void PlayAgain()
 		{
+			if (pauseScreenManager.isActived)
+			{
+				pauseScreenManager.Disable();
+			}
 			this.endScreenManager.Disable();
 			reset(this.currentGameEngine);
-		}
+		}	
 	}
 }

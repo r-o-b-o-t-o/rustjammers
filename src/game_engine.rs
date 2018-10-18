@@ -1,6 +1,5 @@
 use vector2::Vector2;
 use frisbee::Frisbee;
-use std::time::Instant;
 use shared_data::SharedData;
 use player::{ Player, PlayerSide };
 use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRolloutAgent, DijkstraAgent, TabularQLearningAgent, HumanIntent };
@@ -21,7 +20,7 @@ pub struct GameEngine {
     pub frisbee:       Frisbee,
     pub inputs:        (HumanIntent, HumanIntent),
     pub time:          f64,
-    pub start_time:    Instant,
+    pub start_time:    f64,
     pub state_of_game: StateOfGame,
 }
 
@@ -77,7 +76,7 @@ impl GameEngine {
                 HumanIntent::IDLE,
             ),
             time: 60.0,
-            start_time: Instant::now(),
+            start_time: 60.0,
             state_of_game: StateOfGame::Start,
         }
     }
@@ -125,7 +124,7 @@ impl GameEngine {
         self.frisbee.speed = 0.0;
 
         self.time = 60.0;
-        self.start_time = Instant::now();
+        self.start_time = 60.0;
 
         self.state_of_game = StateOfGame::Start;
     }
@@ -183,7 +182,7 @@ impl GameEngine {
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
         // Author: Created by Yohann / Edited by all
-        self.time-= 0.01428; 
+        self.time-= 0.016666; 
         if self.players.0.score >= MAX_ROUND_POINTS ||
            self.players.1.score >= MAX_ROUND_POINTS ||
            self.time <= 0.0 {
@@ -192,7 +191,7 @@ impl GameEngine {
         if self.state_of_game == StateOfGame::End {
             return;
         }
-        if self.state_of_game == StateOfGame::Start && self.get_start_time() <= 0.0 {
+        if self.state_of_game == StateOfGame::Start && self.start_time == 60.0 {
             self.state_of_game = StateOfGame::Playing;
 
             let mut rng = ::rand::thread_rng();
@@ -300,7 +299,7 @@ impl GameEngine {
         let goal = ::collision::frisbee_collision_goal(&mut self.frisbee, &mut self.players);
         if goal {
             self.state_of_game = StateOfGame::Start;
-            self.start_time = Instant::now();
+            self.start_time = 60.0;
             self.players.0.dash_to_pos(Vector2::new(-9.0, 0.0));
             self.players.1.dash_to_pos(Vector2::new(9.0, 0.0));
         }
@@ -313,12 +312,12 @@ impl GameEngine {
         //time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
     //}
 
-    pub fn get_start_time(&self) -> f64 {
-        // Author: Created by Axel
-        let time_start = INITIAL_THROW_TIME;
-        let elapsed = self.start_time.elapsed();
-        time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
-    }
+    //pub fn get_start_time(&self) -> f64 {
+    //    // Author: Created by Axel
+    //   let time_start = INITIAL_THROW_TIME;
+    //    let elapsed = self.start_time.elapsed();
+    //   time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
+    //}
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {
         // Author: Created by Yohann / Edited by all
