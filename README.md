@@ -1,4 +1,4 @@
-Version Unity: 2017.2.0f3
+Version Unity: 2017.3.0f3
 
 Rust stable minimum 1.27
 (penser à build en release pour les performances (`cargo build --release`))

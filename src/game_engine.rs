@@ -18,10 +18,12 @@ pub struct GameEngine {
     pub players:       (Player, Player),
     pub agents:        (Option<Box<Agent>>, Option<Box<Agent>>),
     pub frisbee:       Frisbee,
-    pub inputs:        (HumanIntent, HumanIntent),
     pub time:          f64,
     pub start_time:    f64,
     pub state_of_game: StateOfGame,
+
+    // Agent-specific fields
+    pub inputs:        (HumanIntent, HumanIntent), // Human agent
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -71,20 +73,24 @@ impl GameEngine {
                 None,
             ),
             frisbee: Frisbee::new(),
+            time: 0.0,
+            start_time: 0.0,
+            state_of_game: StateOfGame::Start,
+
             inputs: (
                 HumanIntent::IDLE,
                 HumanIntent::IDLE,
             ),
-            time: 60.0,
-            start_time: 60.0,
-            state_of_game: StateOfGame::Start,
         }
     }
 
-    pub fn get_engine(&self, new_game_engine: &mut GameEngine) {
+    pub fn copy_in(&self, new_game_engine: &mut GameEngine) {
         // Author: Created by Yohann / Edited by all
         new_game_engine.players = self.players;
-        new_game_engine.agents = (Some(Box::new(RandomAgent {})),Some(Box::new(RandomAgent {})));
+        new_game_engine.agents = (
+            Some(Box::new(RandomAgent {})),
+            Some(Box::new(RandomAgent {}))
+        );
         new_game_engine.frisbee = self.frisbee;
         new_game_engine.inputs = self.inputs;
         new_game_engine.time = self.time;
@@ -92,7 +98,7 @@ impl GameEngine {
         new_game_engine.state_of_game = self.state_of_game;
     }
 
-    pub fn create_agent_from_type(agent_type: AgentType) -> Box<Agent> {
+    fn create_agent_from_type(agent_type: AgentType) -> Box<Agent> {
         // Author: Created by Yohann / Edited by Axel
         match agent_type {
             AgentType::Random =>           Box::new(RandomAgent {}),
@@ -122,9 +128,11 @@ impl GameEngine {
         self.frisbee.direction.x = 0.0;
         self.frisbee.direction.y = 0.0;
         self.frisbee.speed = 0.0;
+        self.frisbee.last_held = None;
+        self.frisbee.held_by_player = None;
 
-        self.time = 60.0;
-        self.start_time = 60.0;
+        self.time = MAX_ROUND_TIME;
+        self.start_time = 0.0;
 
         self.state_of_game = StateOfGame::Start;
     }
@@ -182,7 +190,10 @@ impl GameEngine {
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
         // Author: Created by Yohann / Edited by all
-        self.time-= 0.016666; 
+        let time_step = 1.0 / 60.0;
+        self.time -= time_step;
+        self.start_time += time_step;
+
         if self.players.0.score >= MAX_ROUND_POINTS ||
            self.players.1.score >= MAX_ROUND_POINTS ||
            self.time <= 0.0 {
@@ -191,7 +202,7 @@ impl GameEngine {
         if self.state_of_game == StateOfGame::End {
             return;
         }
-        if self.state_of_game == StateOfGame::Start && self.start_time == 60.0 {
+        if self.state_of_game == StateOfGame::Start && self.start_time >= 1.0 {
             self.state_of_game = StateOfGame::Playing;
 
             let mut rng = ::rand::thread_rng();
@@ -212,7 +223,7 @@ impl GameEngine {
                     }
                 },
             };
-            self.frisbee.direction = (target.pos - self.frisbee.pos).normalized();
+            self.frisbee.direction = (target.pos + Vector2::new(target.get_horizontal_aim_direction(), 0.0) - self.frisbee.pos).normalized();
             self.frisbee.speed = INITIAL_FRISBEE_SPEED;
         }
 
@@ -299,25 +310,11 @@ impl GameEngine {
         let goal = ::collision::frisbee_collision_goal(&mut self.frisbee, &mut self.players);
         if goal {
             self.state_of_game = StateOfGame::Start;
-            self.start_time = 60.0;
+            self.start_time = 0.0;
             self.players.0.dash_to_pos(Vector2::new(-9.0, 0.0));
             self.players.1.dash_to_pos(Vector2::new(9.0, 0.0));
         }
     }
-
-   // pub fn get_time(&self) -> f64 {
-        // Author: Created by Esteban
-    //    let time_start = MAX_ROUND_TIME;
-        //let elapsed = self.time.elapsed();
-        //time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
-    //}
-
-    //pub fn get_start_time(&self) -> f64 {
-    //    // Author: Created by Axel
-    //   let time_start = INITIAL_THROW_TIME;
-    //    let elapsed = self.start_time.elapsed();
-    //   time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
-    //}
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {
         // Author: Created by Yohann / Edited by all

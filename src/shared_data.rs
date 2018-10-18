@@ -61,9 +61,8 @@ impl SharedData {
         engine.frisbee.pos.x = self.zbee_x;
         engine.frisbee.pos.y = self.zbee_y;
         engine.frisbee.held_by_player = ::player::player_side_from_i8(self.zbee_held);
-        
-        engine.time = 60.0;
 
+        engine.time = self.time;
         engine.state_of_game = ::game_engine::state_from_i8(self.state_of_game);
     }
 }

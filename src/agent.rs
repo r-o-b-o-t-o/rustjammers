@@ -208,7 +208,7 @@ impl Agent for RandomRolloutAgent {
         };
 
         fn run_simulation(prev: &mut (i8, Intent), engine: &GameEngine, new_game_engine: &mut GameEngine, side: &PlayerSide, intent: Intent) {
-            engine.get_engine(new_game_engine);
+            engine.copy_in(new_game_engine);
             let test = simulation(new_game_engine, side, intent);
             if prev.0 < test.0 {
                 prev.0 = test.0;
