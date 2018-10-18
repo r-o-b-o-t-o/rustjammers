@@ -261,12 +261,129 @@ impl Agent for RandomRolloutAgent {
 
 pub struct DijkstraAgent {}
 
+fn dijkstra(engine: &mut GameEngine, side: &PlayerSide, intent: (i64, i8, Intent), to_exec: Intent) -> (i64, i8, Intent) {
+    let mut prev = intent;
+    prev.1 +=1;
+    let mut new_game_engine = GameEngine::new();
+    let action = match side {
+        PlayerSide::Left => (to_exec, Intent::None),
+        PlayerSide::Right => (Intent::None, to_exec)
+    };
+    engine.step(action);
+    
+    let player = match side {
+        PlayerSide::Left => &engine.players.0,
+        PlayerSide::Right => &engine.players.1,
+    };
+    if engine.state_of_game != StateOfGame::Playing {
+        return prev;
+    }
+
+    match engine.frisbee.held_by_player {
+            Some(held_by) if held_by == *side => {
+                // If the agent holds the frisbee
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::Up)), Intent::Throw(::frisbee::ThrowDirection::Up));
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::LightUp)), Intent::Throw(::frisbee::ThrowDirection::LightUp));
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::Middle)), Intent::Throw(::frisbee::ThrowDirection::Middle));
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::LightDown)), Intent::Throw(::frisbee::ThrowDirection::LightDown));
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::Down)), Intent::Throw(::frisbee::ThrowDirection::Down));
+            },
+            _ => {
+                // If the agent doesn't hold the frisbee
+                if player.slide.is_none() {
+                    // Movements are allowed only if the player is not dashing,
+                    // so we're saving computing time if they are dashing
+
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(0.0, 1.0))), Intent::Move(Vector2::new(0.0, 1.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(0.0, -1.0))), Intent::Move(Vector2::new(0.0, -1.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(-1.0, 0.0))), Intent::Move(Vector2::new(-1.0, 0.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(1.0, 0.0))), Intent::Move(Vector2::new(1.0, 0.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(-1.0, -1.0).normalized())), Intent::Move(Vector2::new(-1.0, -1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(-1.0, 1.0).normalized())), Intent::Move(Vector2::new(-1.0, 1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(1.0, -1.0).normalized())), Intent::Move(Vector2::new(1.0, -1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(1.0, 1.0).normalized())), Intent::Move(Vector2::new(1.0, 1.0).normalized()));
+
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(0.0, 1.0))), Intent::Dash(Vector2::new(0.0, 1.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(0.0, -1.0))), Intent::Dash(Vector2::new(0.0, -1.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(-1.0, 0.0))), Intent::Dash(Vector2::new(-1.0, 0.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(1.0, 0.0))), Intent::Dash(Vector2::new(1.0, 0.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(-1.0, -1.0).normalized())), Intent::Dash(Vector2::new(-1.0, -1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(-1.0, 1.0).normalized())), Intent::Dash(Vector2::new(-1.0, 1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(1.0, -1.0).normalized())), Intent::Dash(Vector2::new(1.0, -1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(1.0, 1.0).normalized())), Intent::Dash(Vector2::new(1.0, 1.0).normalized()));
+                }
+            }
+        };
+
+    prev
+}
+
+fn run_simulation_dji(prev: &mut (i64, i8, Intent),
+    engine: &GameEngine,
+    new_game_engine: &mut GameEngine,
+    side: &PlayerSide,
+    intent: (i64, i8, Intent),
+    to_exec: Intent) {
+
+    engine.copy_in(new_game_engine);
+    let test = dijkstra(new_game_engine, side, intent, to_exec);
+    if prev.0 >= test.0 &&  prev.1 < test.1 {
+        prev.0 = test.0;
+        prev.1 = test.1;
+    }
+}
+
 impl Agent for DijkstraAgent {
     fn get_type(&self) -> AgentType {
         AgentType::Dijkstra
     }
-    fn act(&mut self, _side: PlayerSide, _engine: &GameEngine) -> Intent {
-        Intent::None
+    fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
+        let mut new_game_engine = GameEngine::new();
+        let player = match side {
+            PlayerSide::Left => &engine.players.0,
+            PlayerSide::Right => &engine.players.1,
+        };
+        let mut prev = (0, player.score, Intent::None);
+
+        //run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0, Intent::Move(Vector2::new(0.0, 1.0))));
+
+        match engine.frisbee.held_by_player {
+            Some(held_by) if held_by == side => {
+                // If the agent holds the frisbee
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::Up)), Intent::Throw(::frisbee::ThrowDirection::Up));
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::LightUp)), Intent::Throw(::frisbee::ThrowDirection::LightUp));
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::Middle)), Intent::Throw(::frisbee::ThrowDirection::Middle));
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::LightDown)), Intent::Throw(::frisbee::ThrowDirection::LightDown));
+                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::Down)), Intent::Throw(::frisbee::ThrowDirection::Down));
+            },
+            _ => {
+                // If the agent doesn't hold the frisbee
+                if player.slide.is_none() {
+                    // Movements are allowed only if the player is not dashing,
+                    // so we're saving computing time if they are dashing
+
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(0.0, 1.0))), Intent::Move(Vector2::new(0.0, 1.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(0.0, -1.0))), Intent::Move(Vector2::new(0.0, -1.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(-1.0, 0.0))), Intent::Move(Vector2::new(-1.0, 0.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(1.0, 0.0))), Intent::Move(Vector2::new(1.0, 0.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(-1.0, -1.0).normalized())), Intent::Move(Vector2::new(-1.0, -1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(-1.0, 1.0).normalized())), Intent::Move(Vector2::new(-1.0, 1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(1.0, -1.0).normalized())), Intent::Move(Vector2::new(1.0, -1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(1.0, 1.0).normalized())), Intent::Move(Vector2::new(1.0, 1.0).normalized()));
+
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(0.0, 1.0))), Intent::Dash(Vector2::new(0.0, 1.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(0.0, -1.0))), Intent::Dash(Vector2::new(0.0, -1.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(-1.0, 0.0))), Intent::Dash(Vector2::new(-1.0, 0.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(1.0, 0.0))), Intent::Dash(Vector2::new(1.0, 0.0)));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(-1.0, -1.0).normalized())), Intent::Dash(Vector2::new(-1.0, -1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(-1.0, 1.0).normalized())), Intent::Dash(Vector2::new(-1.0, 1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(1.0, -1.0).normalized())), Intent::Dash(Vector2::new(1.0, -1.0).normalized()));
+                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(1.0, 1.0).normalized())), Intent::Dash(Vector2::new(1.0, 1.0).normalized()));
+                }
+            }
+        };
+
+        prev.2
     }
 }
 
