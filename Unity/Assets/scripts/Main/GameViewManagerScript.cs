@@ -25,7 +25,7 @@ namespace Main
 		[SerializeField] private TextMeshPro p2Score;
 
 		private readonly HumanInput[] inputs = new HumanInput[2];
-
+		private bool block=false;
 		private AgentTypeScript agentTypeManager;
 		[SerializeField] private EndScreenManager endScreenManager;
 
@@ -105,6 +105,9 @@ namespace Main
 			this.currentGameEngine = initialize();
 			reset(this.currentGameEngine);
 			this.mState = new ManagedState();
+			
+			Debug.Log("P1: "+AgentTypeScript.Instance.nbFrames1+","+AgentTypeScript.Instance.nbSim1);
+			Debug.Log("P1: "+AgentTypeScript.Instance.nbFrames2+","+AgentTypeScript.Instance.nbSim2);
 			send_type_p1(this.currentGameEngine, (sbyte) this.agentTypeManager.Types[0], AgentTypeScript.Instance.nbFrames1, AgentTypeScript.Instance.nbSim1);
 			send_type_p2(this.currentGameEngine, (sbyte) this.agentTypeManager.Types[1], AgentTypeScript.Instance.nbFrames2, AgentTypeScript.Instance.nbSim2);
 		}
@@ -151,7 +154,7 @@ namespace Main
 					this.pauseScreenManager.SetScore((int) this.mState.p1_score, (int) this.mState.p2_score);
 				}
 			}
-			if (!pauseScreenManager.isActived)
+			if (!pauseScreenManager.isActived )
 			{
 				this.inputs[0] = HumanInput.Idle;
 				this.inputs[1] = HumanInput.Idle;
@@ -167,23 +170,24 @@ namespace Main
 
 				epoch(this.currentGameEngine, (sbyte) this.inputs[0], (sbyte) this.inputs[1]);
 				this.mState = get_state(this.currentGameEngine);
-				if (this.mState.p1_score < 10)
-				{
-					this.p1Score.text = "0" + this.mState.p1_score;
+				if(mState.time>1.0 && !endScreenManager.isActived){
+					if (this.mState.p1_score < 10)
+					{
+						this.p1Score.text = "0" + this.mState.p1_score;
+					}
+					else
+					{
+						this.p1Score.text = "" + this.mState.p1_score;
+					}
+					if (this.mState.p2_score < 10)
+					{
+						this.p2Score.text = "0" + this.mState.p2_score;
+					}
+					else
+					{
+						this.p2Score.text = "" + this.mState.p2_score;
+					}
 				}
-				else
-				{
-					this.p1Score.text = "" + this.mState.p1_score;
-				}
-				if (this.mState.p2_score < 10)
-				{
-					this.p2Score.text = "0" + this.mState.p2_score;
-				}
-				else
-				{
-					this.p2Score.text = "" + this.mState.p2_score;
-				}
-
 				this.p1Transform.position =
 					new Vector3((float) this.mState.p1_x, this.p1Transform.position.y, (float) this.mState.p1_y);
 				this.p2Transform.position =
@@ -216,7 +220,7 @@ namespace Main
 					this.frisbeeTransform.position =
 						new Vector3((float) this.mState.zbee_x, this.p2Transform.position.y, (float) this.mState.zbee_y);
 				}
-				if (this.mState.State != (sbyte) StateOfGame.End)
+				if (this.mState.State != (sbyte) StateOfGame.End && mState.time>1.0 )
 				{
 					var roundedTime = Mathf.RoundToInt((float) this.mState.time);
 					if (roundedTime < 10)
@@ -231,7 +235,11 @@ namespace Main
 				else
 				{
 					this.endScreenManager.Enable();
-					this.endScreenManager.SetScore((int) this.mState.p1_score, (int) this.mState.p2_score);
+					if (!block)
+					{
+						this.endScreenManager.SetScore((int) this.mState.p1_score, (int) this.mState.p2_score);
+						block = true;
+					}
 				}
 			}
 		}
