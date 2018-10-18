@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using TMPro;
 using Ui;
 using UnityEngine;
@@ -26,10 +27,12 @@ namespace Main
 		private readonly HumanInput[] inputs = new HumanInput[2];
 
 		private AgentTypeScript agentTypeManager;
-
 		[SerializeField] private EndScreenManager endScreenManager;
 
 		[SerializeField] private PauseScreenManager pauseScreenManager;
+
+		public int nbFrames=1000;
+		public int nbSim=3;
 		
 		[StructLayout(LayoutKind.Sequential)]
 		private struct ManagedState
@@ -54,11 +57,11 @@ namespace Main
 		private ManagedState mState;
 
 		[DllImport("rustjammers_engine")]
-		private static extern void send_type_p1(IntPtr gameEngine, sbyte type1);
+		private static extern void send_type_p1(IntPtr gameEngine, sbyte type1, double frames, int sim);
 
 		[DllImport("rustjammers_engine")]
-		private static extern void send_type_p2(IntPtr gameEngine, sbyte type2);
-
+		private static extern void send_type_p2(IntPtr gameEngine, sbyte type2, double frames, int sim);
+		
 		[DllImport("rustjammers_engine")]
 		private static extern IntPtr initialize();
 
@@ -102,8 +105,8 @@ namespace Main
 			this.currentGameEngine = initialize();
 			reset(this.currentGameEngine);
 			this.mState = new ManagedState();
-			send_type_p1(this.currentGameEngine, (sbyte) this.agentTypeManager.Types[0]);
-			send_type_p2(this.currentGameEngine, (sbyte) this.agentTypeManager.Types[1]);
+			send_type_p1(this.currentGameEngine, (sbyte) this.agentTypeManager.Types[0], AgentTypeScript.Instance.nbFrames1, AgentTypeScript.Instance.nbSim1);
+			send_type_p2(this.currentGameEngine, (sbyte) this.agentTypeManager.Types[1], AgentTypeScript.Instance.nbFrames2, AgentTypeScript.Instance.nbSim2);
 		}
 
 		private void CollectInput(int index)

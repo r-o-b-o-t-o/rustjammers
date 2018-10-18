@@ -16,6 +16,11 @@ namespace Main
 
 		public static AgentTypeScript Instance;
 
+		public int nbFrames1;
+		public int nbFrames2;
+		public int nbSim1;
+		public int nbSim2;
+		
 		[HideInInspector]
 		public AgentType[] Types;
 

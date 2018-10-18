@@ -98,12 +98,12 @@ impl GameEngine {
         new_game_engine.state_of_game = self.state_of_game;
     }
 
-    fn create_agent_from_type(agent_type: AgentType) -> Box<Agent> {
+    fn create_agent_from_type(agent_type: AgentType, frames: f64, sim: i8) -> Box<Agent> {
         // Author: Created by Yohann / Edited by Axel
         match agent_type {
             AgentType::Random =>           Box::new(RandomAgent {}),
             AgentType::HumanPlayer =>      Box::new(HumanPlayerAgent {}),
-            AgentType::RandomRollout =>    Box::new(RandomRolloutAgent {}),
+            AgentType::RandomRollout =>    Box::new(RandomRolloutAgent {frames: frames,sim: sim}),
             AgentType::Dijkstra =>         Box::new(DijkstraAgent {}),
             AgentType::TabularQLearning => Box::new(TabularQLearningAgent {}),
             AgentType::None =>             panic!("Invalid agent type."),
@@ -138,15 +138,15 @@ impl GameEngine {
     }
 
     #[no_mangle]
-    pub extern fn send_type_p1(&mut self, agent_type: i8) {
+    pub extern fn send_type_p1(&mut self, agent_type: i8, frames: f64, sim: i8) {
         // Author: Created by Yohann
-        self.agents.0 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type)));
+        self.agents.0 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type),frames,sim));
     }
 
     #[no_mangle]
-    pub extern fn send_type_p2(&mut self, agent_type: i8) {
+    pub extern fn send_type_p2(&mut self, agent_type: i8, frames: f64, sim: i8) {
         // Author: Created by Yohann
-        self.agents.1 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type)));
+        self.agents.1 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type),frames,sim));
     }
 
     #[no_mangle]
