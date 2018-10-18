@@ -29,6 +29,8 @@ namespace Main
 
 		[SerializeField] private EndScreenManager endScreenManager;
 
+		[SerializeField] private PauseScreenManager pauseScreenManager;
+		
 		[StructLayout(LayoutKind.Sequential)]
 		private struct ManagedState
 		{
@@ -134,79 +136,100 @@ namespace Main
 
 		private void Update()
 		{
-			this.inputs[0] = HumanInput.Idle;
-			this.inputs[1] = HumanInput.Idle;
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				if (pauseScreenManager.isActived)
+				{
+					pauseScreenManager.Disable();
+				}
+				else
+				{
+					pauseScreenManager.Enable();
+					this.pauseScreenManager.SetScore((int) this.mState.p1_score, (int) this.mState.p2_score);
+				}
+			}
+			if (!pauseScreenManager.isActived)
+			{
+				this.inputs[0] = HumanInput.Idle;
+				this.inputs[1] = HumanInput.Idle;
 
-			for (var i = 0; i < this.agentTypeManager.Types.Length; i++)
-			{
-				var t = this.agentTypeManager.Types[i];
-				if (t == AgentTypeScript.AgentType.Human)
+				for (var i = 0; i < this.agentTypeManager.Types.Length; i++)
 				{
-					this.CollectInput(i);
+					var t = this.agentTypeManager.Types[i];
+					if (t == AgentTypeScript.AgentType.Human)
+					{
+						this.CollectInput(i);
+					}
 				}
-			}
 
-			epoch(this.currentGameEngine, (sbyte) this.inputs[0], (sbyte) this.inputs[1]);
-			this.mState = get_state(this.currentGameEngine);
-			if (this.mState.p1_score < 10)
-			{
-				this.p1Score.text = "0" + this.mState.p1_score;
-			} else
-			{
-				this.p1Score.text = "" + this.mState.p1_score;
-			}
-			if (this.mState.p2_score < 10)
-			{
-				this.p2Score.text = "0" + this.mState.p2_score;
-			} else
-			{
-				this.p2Score.text = "" + this.mState.p2_score;
-			}
+				epoch(this.currentGameEngine, (sbyte) this.inputs[0], (sbyte) this.inputs[1]);
+				this.mState = get_state(this.currentGameEngine);
+				if (this.mState.p1_score < 10)
+				{
+					this.p1Score.text = "0" + this.mState.p1_score;
+				}
+				else
+				{
+					this.p1Score.text = "" + this.mState.p1_score;
+				}
+				if (this.mState.p2_score < 10)
+				{
+					this.p2Score.text = "0" + this.mState.p2_score;
+				}
+				else
+				{
+					this.p2Score.text = "" + this.mState.p2_score;
+				}
 
-			this.p1Transform.position =
-				new Vector3((float) this.mState.p1_x, this.p1Transform.position.y, (float) this.mState.p1_y);
-			this.p2Transform.position =
-				new Vector3((float) this.mState.p2_x, this.p2Transform.position.y, (float) this.mState.p2_y);
-			if (!this.frisbeeHeld)
-			{
-				if (this.mState.zbee_held == 0)
+				this.p1Transform.position =
+					new Vector3((float) this.mState.p1_x, this.p1Transform.position.y, (float) this.mState.p1_y);
+				this.p2Transform.position =
+					new Vector3((float) this.mState.p2_x, this.p2Transform.position.y, (float) this.mState.p2_y);
+				if (!this.frisbeeHeld)
 				{
-					this.frisbeeTransform.parent = this.p1Hands;
-					this.frisbeeTransform.localPosition = Vector3.zero;
-					this.frisbeeHeld = true;
-				} else if (this.mState.zbee_held == 1)
-				{
-					this.frisbeeTransform.parent = this.p2Hands;
-					this.frisbeeTransform.localPosition = Vector3.zero;
-					this.frisbeeHeld = true;
+					if (this.mState.zbee_held == 0)
+					{
+						this.frisbeeTransform.parent = this.p1Hands;
+						this.frisbeeTransform.localPosition = Vector3.zero;
+						this.frisbeeHeld = true;
+					}
+					else if (this.mState.zbee_held == 1)
+					{
+						this.frisbeeTransform.parent = this.p2Hands;
+						this.frisbeeTransform.localPosition = Vector3.zero;
+						this.frisbeeHeld = true;
+					}
 				}
-			} else
-			{
-				if (this.mState.zbee_held == -1)
+				else
 				{
-					this.frisbeeTransform.parent = null;
-					this.frisbeeHeld = false;
+					if (this.mState.zbee_held == -1)
+					{
+						this.frisbeeTransform.parent = null;
+						this.frisbeeHeld = false;
+					}
 				}
-			}
-			if (!this.frisbeeHeld)
-			{
-				this.frisbeeTransform.position =
-					new Vector3((float) this.mState.zbee_x, this.p2Transform.position.y, (float) this.mState.zbee_y);
-			}
-			if (this.mState.State != (sbyte) StateOfGame.End)
-			{
-				var roundedTime = Mathf.RoundToInt((float) this.mState.time);
-				if (roundedTime < 10)
+				if (!this.frisbeeHeld)
 				{
-					this.SetTimerText("0" + roundedTime);
-				} else
-				{
-					this.SetTimerText(roundedTime.ToString());
+					this.frisbeeTransform.position =
+						new Vector3((float) this.mState.zbee_x, this.p2Transform.position.y, (float) this.mState.zbee_y);
 				}
-			} else
-			{
-				this.endScreenManager.Enable();
-				this.endScreenManager.SetScore((int) this.mState.p1_score, (int) this.mState.p2_score);
+				if (this.mState.State != (sbyte) StateOfGame.End)
+				{
+					var roundedTime = Mathf.RoundToInt((float) this.mState.time);
+					if (roundedTime < 10)
+					{
+						this.SetTimerText("0" + roundedTime);
+					}
+					else
+					{
+						this.SetTimerText(roundedTime.ToString());
+					}
+				}
+				else
+				{
+					this.endScreenManager.Enable();
+					this.endScreenManager.SetScore((int) this.mState.p1_score, (int) this.mState.p2_score);
+				}
 			}
 		}
 

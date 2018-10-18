@@ -20,7 +20,7 @@ pub struct GameEngine {
     pub agents:        (Option<Box<Agent>>, Option<Box<Agent>>),
     pub frisbee:       Frisbee,
     pub inputs:        (HumanIntent, HumanIntent),
-    pub time:          Instant,
+    pub time:          f64,
     pub start_time:    Instant,
     pub state_of_game: StateOfGame,
 }
@@ -76,7 +76,7 @@ impl GameEngine {
                 HumanIntent::IDLE,
                 HumanIntent::IDLE,
             ),
-            time: Instant::now(),
+            time: 60.0,
             start_time: Instant::now(),
             state_of_game: StateOfGame::Start,
         }
@@ -124,7 +124,7 @@ impl GameEngine {
         self.frisbee.direction.y = 0.0;
         self.frisbee.speed = 0.0;
 
-        self.time = Instant::now();
+        self.time = 60.0;
         self.start_time = Instant::now();
 
         self.state_of_game = StateOfGame::Start;
@@ -183,9 +183,10 @@ impl GameEngine {
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
         // Author: Created by Yohann / Edited by all
+        self.time-= 0.01428; 
         if self.players.0.score >= MAX_ROUND_POINTS ||
            self.players.1.score >= MAX_ROUND_POINTS ||
-           self.get_time() <= 0.0 {
+           self.time <= 0.0 {
            self.state_of_game = StateOfGame::End;
         }
         if self.state_of_game == StateOfGame::End {
@@ -305,12 +306,12 @@ impl GameEngine {
         }
     }
 
-    pub fn get_time(&self) -> f64 {
+   // pub fn get_time(&self) -> f64 {
         // Author: Created by Esteban
-        let time_start = MAX_ROUND_TIME;
-        let elapsed = self.time.elapsed();
-        time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
-    }
+    //    let time_start = MAX_ROUND_TIME;
+        //let elapsed = self.time.elapsed();
+        //time_start - elapsed.as_secs() as f64 - (elapsed.subsec_millis() as f64 / 1000.0)
+    //}
 
     pub fn get_start_time(&self) -> f64 {
         // Author: Created by Axel
@@ -335,7 +336,7 @@ impl GameEngine {
         shared.zbee_y = self.frisbee.pos.y;
         shared.zbee_held = ::player::player_side_to_i8(self.frisbee.held_by_player);
 
-        shared.time = self.get_time();
+        shared.time = self.time;
 
         shared.state_of_game = state_to_i8(&self.state_of_game);
     }
