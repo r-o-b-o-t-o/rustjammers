@@ -24,7 +24,7 @@ pub enum Intent {
 }
 
 fn simulation(engine: &mut GameEngine, side: &PlayerSide, intent: Intent, nb_frames : f64) -> (i8, Intent) {
-    // Author: Created by Yohann
+    // Author: Created by Yohann / Edited by Esteban
     let intents = match *side {
         PlayerSide::Left => (intent, Intent::None),
         PlayerSide::Right => (Intent::None, intent),
@@ -195,7 +195,7 @@ impl Agent for HumanPlayerAgent {
 pub struct RandomRolloutAgent {pub frames : f64,pub sim: i8}
 
 impl Agent for RandomRolloutAgent {
-    // Author: Created by Yohann / Edited by Axel
+    // Author: Created by Yohann / Edited by all
     fn get_type(&self) -> AgentType {
         AgentType::RandomRollout
     }

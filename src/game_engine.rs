@@ -99,7 +99,7 @@ impl GameEngine {
     }
 
     fn create_agent_from_type(agent_type: AgentType, frames: f64, sim: i8) -> Box<Agent> {
-        // Author: Created by Yohann / Edited by Axel
+        // Author: Created by Yohann / Edited by all
         match agent_type {
             AgentType::Random =>           Box::new(RandomAgent {}),
             AgentType::HumanPlayer =>      Box::new(HumanPlayerAgent {}),
@@ -139,13 +139,13 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn send_type_p1(&mut self, agent_type: i8, frames: f64, sim: i8) {
-        // Author: Created by Yohann
+        // Author: Created by Yohann / Edited by Esteban
         self.agents.0 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type),frames,sim));
     }
 
     #[no_mangle]
     pub extern fn send_type_p2(&mut self, agent_type: i8, frames: f64, sim: i8) {
-        // Author: Created by Yohann
+        // Author: Created by Yohann / Edited by Esteban
         self.agents.1 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type),frames,sim));
     }
 
