@@ -12,10 +12,12 @@ namespace Ui
 	{
 		// Author: Created by Esteban / Edited by Axel
 		[SerializeField] private string gameScene;
+
 		[SerializeField] private TMP_Dropdown[] agentDropdowns;
 		[SerializeField] private GameObject[] agentKbds;
 		public InputField[] inputFields;
 		[SerializeField] private AgentTypeScript agentTypeManager;
+
 		private void Start()
 		{
 			var list = new List<TMP_Dropdown.OptionData>();
@@ -34,67 +36,59 @@ namespace Ui
 		public void onP1NbFrameChanged()
 		{
 			var number = 500;
-			var val = int.TryParse(inputFields[0].text,out number);
-			Debug.Log(number+" "+val );
+			var val = int.TryParse(inputFields[0].text, out number);
 			if (val && number > 10)
 			{
 				agentTypeManager.nbFrames1 = number;
-			}
-			else
+			} else
 			{
 				agentTypeManager.nbFrames1 = 10;
 			}
 			inputFields[0].text = "" + agentTypeManager.nbFrames1;
 		}
-		
+
 		public void onP2NbFrameChanged()
 		{
 			var number = 500;
-			var val = int.TryParse(inputFields[1].text,out number);
-			Debug.Log(number+" "+val );
+			var val = int.TryParse(inputFields[1].text, out number);
 			if (val && number > 10)
 			{
 				agentTypeManager.nbFrames2 = number;
-			}
-			else
+			} else
 			{
 				agentTypeManager.nbFrames2 = 10;
 			}
 			inputFields[1].text = "" + agentTypeManager.nbFrames2;
 		}
-		
+
 		public void onP1NbSimChanged()
 		{
 			var number = 500;
-			var val = int.TryParse(inputFields[2].text,out number);
-			Debug.Log(number+" "+val );
+			var val = int.TryParse(inputFields[2].text, out number);
 			if (val && number > 0)
 			{
 				agentTypeManager.nbSim1 = number;
-			}
-			else
+			} else
 			{
 				agentTypeManager.nbSim1 = 1;
 			}
 			inputFields[2].text = "" + agentTypeManager.nbSim1;
 		}
-		
+
 		public void onP2NbSimChanged()
 		{
 			var number = 500;
-			var val = int.TryParse(inputFields[3].text,out number);
-			Debug.Log(number+" "+val );
+			var val = int.TryParse(inputFields[3].text, out number);
 			if (val && number > 0)
 			{
 				agentTypeManager.nbSim2 = number;
-			}
-			else
+			} else
 			{
 				agentTypeManager.nbSim2 = 1;
 			}
 			inputFields[3].text = "" + agentTypeManager.nbSim2;
 		}
-		
+
 		public void OnPlayButtonClicked()
 		{
 			for (var i = 0; i < this.agentDropdowns.Length; i++)
@@ -103,10 +97,9 @@ namespace Ui
 			}
 			SceneManager.LoadSceneAsync(this.gameScene, LoadSceneMode.Single);
 		}
-		
+
 		public void OnTurboButtonClicked()
 		{
-			
 			for (var i = 0; i < this.agentDropdowns.Length; i++)
 			{
 				this.agentTypeManager.Types[i] = (AgentTypeScript.AgentType) this.agentDropdowns[i].value;
@@ -114,7 +107,16 @@ namespace Ui
 			SceneManager.LoadSceneAsync(this.gameScene, LoadSceneMode.Single);
 			AgentTypeScript.Instance.turbo = true;
 		}
-		
+
+		public void OnQuitButtonClicked()
+		{
+#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPlaying = false;
+#else
+			Application.Quit();
+#endif
+		}
+
 		public void OnP1AgentTypeChanged(Int32 val)
 		{
 			var human = val == (Int32) AgentTypeScript.AgentType.Human;
