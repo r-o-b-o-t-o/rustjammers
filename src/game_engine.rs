@@ -2,10 +2,9 @@ use vector2::Vector2;
 use frisbee::Frisbee;
 use shared_data::SharedData;
 use player::{ Player, PlayerSide };
-use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRolloutAgent, DijkstraAgent, TabularQLearningAgent, HumanIntent };
+use agent::{ Intent, AgentType, Agent, RandomAgent, HumanPlayerAgent, RandomRolloutAgent, DijkstraAgent, TabularQLearningAgent, QValues, HumanIntent, ActionResult };
 
 use rand::Rng;
-use std::mem::transmute;
 
 pub const MAX_ROUND_POINTS: i8       = 30;
 pub const MAX_ROUND_TIME: f64        = 60.0;
@@ -23,7 +22,11 @@ pub struct GameEngine {
     pub state_of_game: StateOfGame,
 
     // Agent-specific fields
-    pub inputs:        (HumanIntent, HumanIntent), // Human agent
+    pub inputs:        (HumanIntent, HumanIntent), // Human agent / Q-Learning
+    pub q_values:      QValues, // Q-Learning
+    pub rewards:       (f32, f32), // Q-Learning
+    pub q_scored:      bool, // Q-Learning
+    pub explo_rate:    f32, // Q-Learning
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -52,13 +55,33 @@ impl GameEngine {
     #[no_mangle]
     pub extern fn initialize() -> *mut Self {
         // Author: Created by Axel
-        unsafe { transmute(Box::new(Self::new())) }
+        let boxed = Box::new(Self::new());
+        Box::into_raw(boxed)
+    }
+
+    pub fn log(&self, s: &str) {
+        use std::fs::OpenOptions;
+        use std::io::prelude::*;
+
+        let mut file = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .append(true)
+            .open("rustjammers_debug.log")
+            .unwrap();
+
+        let mut s = String::from(s);
+        s.push_str("\r\n");
+        file.write(&s.into_bytes()).unwrap();
+        file.flush().unwrap();
     }
 
     #[no_mangle]
-    pub extern fn dispose(ptr: *mut Self) {
+    pub unsafe extern fn dispose(ptr: *mut Self) {
         // Author: Created by Axel
-        let _state: Box<Self> = unsafe { transmute(ptr) };
+        if !ptr.is_null() {
+            let _state: Box<Self> = Box::from_raw(ptr);
+        }
     }
 
     pub fn new() -> Self {
@@ -81,6 +104,10 @@ impl GameEngine {
                 HumanIntent::IDLE,
                 HumanIntent::IDLE,
             ),
+            q_values: QValues::new(),
+            rewards: (0.0, 0.0),
+            q_scored: false,
+            explo_rate: 0.05,
         }
     }
 
@@ -135,18 +162,48 @@ impl GameEngine {
         self.start_time = 0.0;
 
         self.state_of_game = StateOfGame::Start;
+
+        self.inputs = (HumanIntent::IDLE, HumanIntent::IDLE);
+        self.rewards = (0.0, 0.0);
+        self.q_scored = false;
     }
 
     #[no_mangle]
     pub extern fn send_type_p1(&mut self, agent_type: i8) {
         // Author: Created by Yohann
-        self.agents.0 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type)));
+        let t = ::agent::agent_type_from_i8(agent_type);
+        self.agents.0 = Some(Self::create_agent_from_type(t));
+        if t == AgentType::TabularQLearning {
+            self.load_q_values();
+        }
     }
 
     #[no_mangle]
     pub extern fn send_type_p2(&mut self, agent_type: i8) {
         // Author: Created by Yohann
-        self.agents.1 = Some(Self::create_agent_from_type(::agent::agent_type_from_i8(agent_type)));
+        let t = ::agent::agent_type_from_i8(agent_type);
+        self.agents.1 = Some(Self::create_agent_from_type(t));
+        if t == AgentType::TabularQLearning {
+            self.load_q_values();
+        }
+    }
+
+    fn load_q_values(&mut self) {
+        if !self.q_values.is_empty() {
+            return;
+        }
+        use ::std::fs::File;
+        use ::std::io::BufReader;
+
+        //let br = BufReader::new(File::open("q_values.bin").expect("Could not open the Q-values file."));
+        //self.q_values = ::bincode::deserialize_from(br).unwrap();
+
+        let f = match File::open("q_values.bin") {
+            Ok(f) => f,
+            _ => return,
+        };
+        let br = BufReader::new(f);
+        self.q_values = ::bincode::deserialize_from(br).unwrap();
     }
 
     #[no_mangle]
@@ -155,7 +212,7 @@ impl GameEngine {
         let mut a1 = self.agents.0.take().unwrap();
         let mut a2 = self.agents.1.take().unwrap();
 
-        let input1 = match a1.get_type() { 
+        let input1 = match a1.get_type() {
             AgentType::HumanPlayer => p1_h_action,
             _ => HumanIntent::IDLE
         };
@@ -190,22 +247,31 @@ impl GameEngine {
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
         // Author: Created by Yohann / Edited by all
-        let time_step = 1.0 / 60.0;
+
+        // Update timers
+        let time_step = 1.0 / 60.0; // Assume we run at 60 frames per second
         self.time -= time_step;
         self.start_time += time_step;
 
+        // End game if one of the players reached the maximum score
+        // or if the time runs out
         if self.players.0.score >= MAX_ROUND_POINTS ||
            self.players.1.score >= MAX_ROUND_POINTS ||
            self.time <= 0.0 {
            self.state_of_game = StateOfGame::End;
         }
         if self.state_of_game == StateOfGame::End {
+            // We don't need to update the rest if the game just ended
             return;
         }
+
+        // Start the round after waiting a bit for players to reset their positions
         if self.state_of_game == StateOfGame::Start && self.start_time >= 1.0 {
+            // Resume the game
             self.state_of_game = StateOfGame::Playing;
 
-            let mut rng = ::rand::thread_rng();
+            // If it is the first round, throw the frisbee at the player who lost the last round
+            // Otherwise, target a random player
             let target = match self.frisbee.last_held {
                 Some(ref last_held) => {
                     match last_held {
@@ -214,6 +280,7 @@ impl GameEngine {
                     }
                 },
                 None => {
+                    let mut rng = ::rand::thread_rng();
                     if rng.gen_range(0.0, 1.0) < 0.5 {
                         self.frisbee.last_held = Some(PlayerSide::Right);
                         &self.players.0
@@ -223,21 +290,26 @@ impl GameEngine {
                     }
                 },
             };
+            // Set direction so that the frisbee arrives in the player's hands
             self.frisbee.direction = (target.pos + Vector2::new(target.get_horizontal_aim_direction(), 0.0) - self.frisbee.pos).normalized();
             self.frisbee.speed = INITIAL_FRISBEE_SPEED;
         }
 
-        fn apply_action(player: &mut Player, frisbee: &mut Frisbee, intent: &Intent, state_of_game: &StateOfGame) {
+        fn apply_action(player: &mut Player, frisbee: &mut Frisbee, intent: &Intent, state_of_game: &StateOfGame) -> ActionResult {
             // Author: Created by Axel
+            let mut res = ActionResult::None;
+
             match intent {
                 Intent::None => {},
                 Intent::Move(dir) => {
                     if *state_of_game == StateOfGame::Playing {
-                        if player.slide.is_none() {
+                        if player.slide.is_none() { // Cannot move while dashing
                             match frisbee.held_by_player {
+                                // Cannot move while holding frisbee
                                 Some(held_by) if held_by == player.side.unwrap() => {},
                                 _ => {
                                     player.pos += *dir * 0.1;
+                                    res = ActionResult::Moved;
                                 }
                             };
                         }
@@ -247,6 +319,7 @@ impl GameEngine {
                     if *state_of_game == StateOfGame::Playing {
                         let dir = dir.normalized();
                         player.dash(dir * PLAYER_DASH_POWER);
+                        res = ActionResult::Dashed;
                     }
                 },
                 Intent::Throw(dir) => {
@@ -256,6 +329,7 @@ impl GameEngine {
                             frisbee.speed = INITIAL_FRISBEE_SPEED;
                             frisbee.last_held = frisbee.held_by_player;
                             frisbee.held_by_player = None;
+                            res = ActionResult::Threw;
                         },
                         _ => {}
                     };
@@ -263,9 +337,12 @@ impl GameEngine {
             };
 
             if *state_of_game == StateOfGame::Playing {
+                // We check the state of game to prevent grabbing the frisbee before it is initially thrown (Start state)
                 match frisbee.held_by_player {
                     None if ::collision::player_collides_with_frisbee(player, frisbee) => {
+                        // Grab frisbee if the player collides with it
                         frisbee.held_by_player = player.side;
+                        res = ActionResult::GrabbedFrisbee;
                     },
                     _ => {}
                 };
@@ -278,9 +355,59 @@ impl GameEngine {
                     player.slide = None;
                 }
             }
+
+            res
         }
-        apply_action(&mut self.players.0, &mut self.frisbee, &intents.0, &self.state_of_game);
-        apply_action(&mut self.players.1, &mut self.frisbee, &intents.1, &self.state_of_game);
+
+        fn apply_action_rewards_to_q_agent(action_result: ActionResult, reward: &mut f32) -> bool {
+            match action_result {
+                ActionResult::None => *reward = -1.0,
+                ActionResult::Moved => *reward = -1.0,
+                ActionResult::Dashed => *reward = -5.0,
+                ActionResult::GrabbedFrisbee => *reward = 0.0,
+                ActionResult::Threw => {
+                    *reward = 0.0;
+                    return true;
+                },
+            };
+            false
+        }
+
+        fn reward_q_for_goal(engine: &mut GameEngine) {
+            let a1 = engine.agents.0.take().unwrap();
+            let a2 = engine.agents.1.take().unwrap();
+
+            match engine.frisbee.last_held {
+                Some(PlayerSide::Left) => {
+                    if a2.get_type() == AgentType::TabularQLearning {
+                        engine.rewards.1 = -100.0;
+                    }
+                },
+                Some(PlayerSide::Right) => {
+                    if a1.get_type() == AgentType::TabularQLearning {
+                        engine.rewards.0 = -100.0;
+                    }
+                },
+                _ => {}
+            };
+
+            engine.agents = (Some(a1), Some(a2));
+            engine.q_scored = true;
+        }
+
+        let a1 = self.agents.0.take().unwrap();
+        let res = apply_action(&mut self.players.0, &mut self.frisbee, &intents.0, &self.state_of_game);
+        if a1.get_type() == AgentType::TabularQLearning {
+            apply_action_rewards_to_q_agent(res, &mut self.rewards.0);
+        }
+
+        let a2 = self.agents.1.take().unwrap();
+        let res = apply_action(&mut self.players.1, &mut self.frisbee, &intents.1, &self.state_of_game);
+        if a2.get_type() == AgentType::TabularQLearning {
+            apply_action_rewards_to_q_agent(res, &mut self.rewards.1);
+        }
+
+        self.agents = (Some(a1), Some(a2));
 
         match self.frisbee.held_by_player {
             Some(held_by) => {
@@ -299,10 +426,12 @@ impl GameEngine {
 
         let collided = ::collision::player_collision(&mut self.players.0);
         if collided {
+            // Cancels slide if the player hits an obstacle to prevent being stuck
             self.players.0.slide = None;
         }
         let collided = ::collision::player_collision(&mut self.players.1);
         if collided {
+            // Cancels slide if the player hits an obstacle to prevent being stuck
             self.players.1.slide = None;
         }
 
@@ -313,6 +442,8 @@ impl GameEngine {
             self.start_time = 0.0;
             self.players.0.dash_to_pos(Vector2::new(-9.0, 0.0));
             self.players.1.dash_to_pos(Vector2::new(9.0, 0.0));
+
+            reward_q_for_goal(self);
         }
     }
 
@@ -335,5 +466,70 @@ impl GameEngine {
         shared.time = self.time;
 
         shared.state_of_game = state_to_i8(&self.state_of_game);
+    }
+
+    pub fn hash(&self) -> u64 {
+        // Author: Created by Axel
+        fn set_state(hash: &mut u64, val: f64, min: i64, max: i64, scale: f64, amplitudes: &mut Vec<u32>, max_value: &mut u64) {
+            fn discretize(val: f64, min: i64, max: i64, scale: f64) -> (u32, u32) {
+                let min = min as f64 * scale;
+                let max = max as f64 * scale;
+                let val = val * scale;
+                let amplitude = (max - min + 1.0) as u32;
+                let res = ((val.round() + min.abs()) as u32) % amplitude;
+                (res, amplitude)
+            }
+
+            let mut factor = 1;
+            for a in amplitudes.iter() {
+                factor *= *a;
+            }
+            let (val, _) = discretize(val, min, max, scale);
+            *hash += (val * factor) as u64;
+            let (val, amplitude) = discretize(max as f64, min, max, scale);
+            *max_value += (val * factor) as u64;
+            amplitudes.push(amplitude);
+        }
+
+        let mut val = 0;
+        let mut max_value = 0;
+        let mut amplitudes: Vec<u32> = Vec::new();
+
+        let scale = 1.0;
+        set_state(&mut val, self.players.0.pos.x, -9, -1, scale, &mut amplitudes, &mut max_value);
+        set_state(&mut val, self.players.0.pos.y, -5, 5, scale, &mut amplitudes, &mut max_value);
+
+        /*set_state(&mut val, self.players.1.pos.x, 1, 9, scale, &mut amplitudes, &mut max_value);
+        set_state(&mut val, self.players.1.pos.y, -5, 5, scale, &mut amplitudes, &mut max_value);*/
+
+        set_state(&mut val, self.frisbee.pos.x, -9, 9, scale, &mut amplitudes, &mut max_value);
+        set_state(&mut val, self.frisbee.pos.y, -5, 5, scale, &mut amplitudes, &mut max_value);
+
+        set_state(&mut val, match self.frisbee.last_held {
+            Some(side) => match side {
+                PlayerSide::Left => 1.0,
+                //PlayerSide::Right => 2.0,
+                PlayerSide::Right => 0.0,
+            },
+            None => 0.0
+        //}, 0, 2, 1.0, &mut amplitudes, &mut max_value);
+        }, 0, 1, 1.0, &mut amplitudes, &mut max_value);
+
+        set_state(&mut val, match self.frisbee.held_by_player {
+            Some(side) => match side {
+                PlayerSide::Left => 1.0,
+                //PlayerSide::Right => 2.0,
+                PlayerSide::Right => 0.0,
+            },
+            None => 0.0
+        //}, 0, 2, 1.0, &mut amplitudes, &mut max_value);
+        }, 0, 1, 1.0, &mut amplitudes, &mut max_value);
+
+        /*set_state(&mut val, self.frisbee.direction.x, -1, 1, 1.5, &mut amplitudes, &mut max_value);
+        set_state(&mut val, self.frisbee.direction.y, -1, 1, 1.5, &mut amplitudes, &mut max_value);*/
+
+        //println!("Max value: {}", max_value);
+
+        val
     }
 }
