@@ -13,7 +13,7 @@ pub struct Frisbee {
     pub last_held:      Option<PlayerSide>,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum ThrowDirection {
     Up = 0,
     LightUp,

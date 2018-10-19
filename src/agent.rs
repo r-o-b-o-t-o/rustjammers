@@ -10,11 +10,11 @@ pub enum AgentType {
     Random,
     RandomRollout,
     Dijkstra,
-    TabularQLearning,
+    TabularQLearning, 
     None
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Intent {
     // Author: Created by Axel
     None,
@@ -261,76 +261,116 @@ impl Agent for RandomRolloutAgent {
 
 pub struct DijkstraAgent {}
 
-fn dijkstra(engine: &mut GameEngine, side: &PlayerSide, intent: (i64, i8, Intent), to_exec: Intent) -> (i64, i8, Intent) {
-    let mut prev = intent;
-    prev.1 +=1;
-    let mut new_game_engine = GameEngine::new();
-    let action = match side {
-        PlayerSide::Left => (to_exec, Intent::None),
-        PlayerSide::Right => (Intent::None, to_exec)
-    };
-    engine.step(action);
-    
-    let player = match side {
-        PlayerSide::Left => &engine.players.0,
-        PlayerSide::Right => &engine.players.1,
-    };
-    if engine.state_of_game != StateOfGame::Playing {
-        return prev;
-    }
-
-    match engine.frisbee.held_by_player {
-            Some(held_by) if held_by == *side => {
-                // If the agent holds the frisbee
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::Up)), Intent::Throw(::frisbee::ThrowDirection::Up));
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::LightUp)), Intent::Throw(::frisbee::ThrowDirection::LightUp));
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::Middle)), Intent::Throw(::frisbee::ThrowDirection::Middle));
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::LightDown)), Intent::Throw(::frisbee::ThrowDirection::LightDown));
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Throw(::frisbee::ThrowDirection::Down)), Intent::Throw(::frisbee::ThrowDirection::Down));
-            },
-            _ => {
-                // If the agent doesn't hold the frisbee
-                if player.slide.is_none() {
-                    // Movements are allowed only if the player is not dashing,
-                    // so we're saving computing time if they are dashing
-
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(0.0, 1.0))), Intent::Move(Vector2::new(0.0, 1.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(0.0, -1.0))), Intent::Move(Vector2::new(0.0, -1.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(-1.0, 0.0))), Intent::Move(Vector2::new(-1.0, 0.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(1.0, 0.0))), Intent::Move(Vector2::new(1.0, 0.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(-1.0, -1.0).normalized())), Intent::Move(Vector2::new(-1.0, -1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(-1.0, 1.0).normalized())), Intent::Move(Vector2::new(-1.0, 1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(1.0, -1.0).normalized())), Intent::Move(Vector2::new(1.0, -1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Move(Vector2::new(1.0, 1.0).normalized())), Intent::Move(Vector2::new(1.0, 1.0).normalized()));
-
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(0.0, 1.0))), Intent::Dash(Vector2::new(0.0, 1.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(0.0, -1.0))), Intent::Dash(Vector2::new(0.0, -1.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(-1.0, 0.0))), Intent::Dash(Vector2::new(-1.0, 0.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(1.0, 0.0))), Intent::Dash(Vector2::new(1.0, 0.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(-1.0, -1.0).normalized())), Intent::Dash(Vector2::new(-1.0, -1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(-1.0, 1.0).normalized())), Intent::Dash(Vector2::new(-1.0, 1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(1.0, -1.0).normalized())), Intent::Dash(Vector2::new(1.0, -1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (intent.0+1, player.score, Intent::Dash(Vector2::new(1.0, 1.0).normalized())), Intent::Dash(Vector2::new(1.0, 1.0).normalized()));
-                }
-            }
-        };
-
-    prev
+pub struct Node {
+    pub engine: GameEngine,
+    pub first_intent: Intent,
+    pub cost: i64,
+    pub score: i64
 }
 
-fn run_simulation_dji(prev: &mut (i64, i8, Intent),
-    engine: &GameEngine,
-    new_game_engine: &mut GameEngine,
-    side: &PlayerSide,
-    intent: (i64, i8, Intent),
-    to_exec: Intent) {
 
-    engine.copy_in(new_game_engine);
-    let test = dijkstra(new_game_engine, side, intent, to_exec);
-    if prev.0 >= test.0 &&  prev.1 < test.1 {
-        prev.0 = test.0;
-        prev.1 = test.1;
+pub fn get_best(nodes: &Vec<Node>) -> Vec<Node> {
+        let mut max_score = 0;
+        let mut max_nodes: Vec<Node> = Vec::new();
+
+        for i in nodes.iter() {
+            if i.score > max_score {
+                max_score = i.score;
+            } 
+        }
+
+        for i in nodes.iter() {
+            if i.score == max_score {
+                let mut game_engine = GameEngine::new();
+                i.engine.copy_in(&mut game_engine);
+                max_nodes.push(Node { engine: game_engine, first_intent: i.first_intent, cost: i.cost, score: i.score });
+            } 
+        }
+
+        max_nodes
     }
+
+fn simulation_dij(engine: &mut GameEngine, side: &PlayerSide, intent: Intent, nodes: &mut Vec<Node>, score:  i64, cost: i64) {
+    
+
+    if cost >= 10000 || engine.state_of_game != StateOfGame::Playing {return;}
+    let intents = match *side {
+        PlayerSide::Left => (intent, Intent::None),
+        PlayerSide::Right => (Intent::None, intent),
+    };
+    let mut add_score = 0;
+    let distance_before = match *side {
+        PlayerSide::Left => (engine.frisbee.pos - engine.players.0.pos).length(),
+        PlayerSide::Right => (engine.frisbee.pos - engine.players.1.pos).length(),
+    };
+    engine.step(intents);
+    let distance_after = match *side {
+        PlayerSide::Left => (engine.frisbee.pos - engine.players.0.pos).length(),
+        PlayerSide::Right => (engine.frisbee.pos - engine.players.1.pos).length(),
+    };
+
+    if distance_after < distance_before {
+        add_score += 1000;
+    }
+    if distance_after > distance_before {
+        add_score -= 100;
+    }
+    if distance_after == distance_before {
+        add_score -= 50;
+    }
+
+    let player = match side {
+            PlayerSide::Left => &engine.players.0,
+            PlayerSide::Right => &engine.players.1,
+    };
+
+    match engine.frisbee.held_by_player {
+        Some(held_by) if held_by == *side =>  add_score = 100000,
+        _ =>{}
+    }; 
+    let mut new_engine = GameEngine::new();
+
+    let mut node_engine = GameEngine::new();
+    engine.copy_in(&mut node_engine);
+    let node = Node { engine: node_engine, first_intent: intent, cost: cost, score: add_score + score as i64 };
+    nodes.push(node);
+ 
+
+    match engine.frisbee.held_by_player {
+        Some(held_by) if held_by == *side => {
+            // If the agent holds the frisbee
+            simulation_dij(&mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Up), nodes, add_score + score+ 3000 +(player.score) as i64, cost+1);
+            simulation_dij(&mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::LightUp), nodes, add_score + score+ 4000 +(player.score) as i64, cost+1);
+            simulation_dij(&mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Middle), nodes, add_score + score+ 2000 +(player.score) as i64, cost+1);
+            simulation_dij(&mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::LightDown), nodes, add_score + score+ 4000 +(player.score) as i64, cost+1);
+            simulation_dij(&mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Down), nodes, add_score + score+ 3000+(player.score) as i64, cost+1);
+        },
+        _ => {
+            // If the agent doesn't hold the frisbee
+            if player.slide.is_none() {
+                // Movements are allowed only if the player is not dashing,
+                // so we're saving computing time if they are dashing
+
+                simulation_dij(&mut new_engine, &side, Intent::Move(Vector2::new(0.0, 1.0)), nodes,add_score + score +(player.score + 1) as i64, cost+1);
+                simulation_dij(&mut new_engine, &side, Intent::Move(Vector2::new(0.0, -1.0)), nodes,add_score + score +(player.score + 1) as i64, cost+1);
+                simulation_dij(&mut new_engine, &side, Intent::Move(Vector2::new(-1.0, 0.0)), nodes,add_score + score +(player.score + 1) as i64, cost+1);
+                simulation_dij(&mut new_engine, &side, Intent::Move(Vector2::new(1.0, 0.0)),  nodes,add_score + score +(player.score + 1) as i64, cost+1);
+                simulation_dij(&mut new_engine, &side, Intent::Move(Vector2::new(-1.0, -1.0).normalized()), nodes,add_score + score +(player.score + 1) as i64, cost+1);
+                simulation_dij(&mut new_engine, &side, Intent::Move(Vector2::new(-1.0, 1.0).normalized()), nodes,add_score + score +(player.score + 1) as i64, cost+1);
+                simulation_dij(&mut new_engine, &side, Intent::Move(Vector2::new(1.0, -1.0).normalized()), nodes,add_score + score +(player.score + 1) as i64, cost+1);
+                simulation_dij(&mut new_engine, &side, Intent::Move(Vector2::new(1.0, 1.0).normalized()), nodes,add_score + score +(player.score + 1) as i64, cost+1);
+
+                simulation_dij(&mut new_engine, &side, Intent::Dash(Vector2::new(0.0, 1.0)), nodes, add_score + score +(player.score + 1) as i64, cost+4);
+                simulation_dij(&mut new_engine, &side, Intent::Dash(Vector2::new(0.0, -1.0)), nodes, add_score + score +(player.score + 1) as i64, cost+4);
+                simulation_dij(&mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, 0.0)), nodes, add_score + score +(player.score + 1) as i64, cost+4);
+                simulation_dij(&mut new_engine, &side, Intent::Dash(Vector2::new(1.0, 0.0)), nodes, add_score + score +(player.score + 1) as i64, cost+4);
+                simulation_dij(&mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, -1.0).normalized()), nodes, add_score + score +(player.score + 1) as i64, cost+4);
+                simulation_dij(&mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, 1.0).normalized()), nodes, add_score + score +(player.score + 1) as i64, cost+4);
+                simulation_dij(&mut new_engine, &side, Intent::Dash(Vector2::new(1.0, -1.0).normalized()), nodes, add_score + score +(player.score + 1) as i64, cost+4);
+                simulation_dij(&mut new_engine, &side, Intent::Dash(Vector2::new(1.0, 1.0).normalized()), nodes, add_score + score +(player.score + 1) as i64, cost+4);
+            }
+        }
+    };
 }
 
 impl Agent for DijkstraAgent {
@@ -338,23 +378,38 @@ impl Agent for DijkstraAgent {
         AgentType::Dijkstra
     }
     fn act(&mut self, side: PlayerSide, engine: &GameEngine) -> Intent {
-        let mut new_game_engine = GameEngine::new();
+        let mut new_engine = GameEngine::new();
         let player = match side {
             PlayerSide::Left => &engine.players.0,
             PlayerSide::Right => &engine.players.1,
         };
-        let mut prev = (0, player.score, Intent::None);
 
-        //run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0, Intent::Move(Vector2::new(0.0, 1.0))));
+
+        let mut nodes: Vec<Node> = Vec::new();
+        let mut node_engine = GameEngine::new();
+        engine.copy_in(&mut node_engine);
+        let node = Node { engine: node_engine, first_intent: Intent::None, cost: -1, score: player.score as i64 };
+        nodes.push(node);
+        //let mut prev = (0, player.score, Intent::None);
+
+        fn run_simulation(engine: &GameEngine, new_game_engine: &mut GameEngine, side: &PlayerSide, intent: Intent, nodes: &mut Vec<Node>, score: i64) {
+            engine.copy_in(new_game_engine);
+            let mut node_engine = GameEngine::new();
+            engine.copy_in(&mut node_engine);
+            let node = Node { engine: node_engine, first_intent: intent, cost: -1, score: score as i64 };
+            nodes.push(node);
+            simulation_dij(new_game_engine, side, intent, nodes, score, 0);
+        }
+
 
         match engine.frisbee.held_by_player {
             Some(held_by) if held_by == side => {
                 // If the agent holds the frisbee
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::Up)), Intent::Throw(::frisbee::ThrowDirection::Up));
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::LightUp)), Intent::Throw(::frisbee::ThrowDirection::LightUp));
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::Middle)), Intent::Throw(::frisbee::ThrowDirection::Middle));
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::LightDown)), Intent::Throw(::frisbee::ThrowDirection::LightDown));
-                run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Throw(::frisbee::ThrowDirection::Down)), Intent::Throw(::frisbee::ThrowDirection::Down));
+                run_simulation(&engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Up), &mut nodes, (player.score + 30) as i64);
+                run_simulation(&engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::LightUp), &mut nodes, (player.score + 40) as i64);
+                run_simulation(&engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Middle), &mut nodes, (player.score + 20) as i64);
+                run_simulation(&engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::LightDown), &mut nodes, (player.score + 40) as i64);
+                run_simulation(&engine, &mut new_engine, &side, Intent::Throw(::frisbee::ThrowDirection::Down), &mut nodes, (player.score + 30) as i64);
             },
             _ => {
                 // If the agent doesn't hold the frisbee
@@ -362,28 +417,46 @@ impl Agent for DijkstraAgent {
                     // Movements are allowed only if the player is not dashing,
                     // so we're saving computing time if they are dashing
 
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(0.0, 1.0))), Intent::Move(Vector2::new(0.0, 1.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(0.0, -1.0))), Intent::Move(Vector2::new(0.0, -1.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(-1.0, 0.0))), Intent::Move(Vector2::new(-1.0, 0.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(1.0, 0.0))), Intent::Move(Vector2::new(1.0, 0.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(-1.0, -1.0).normalized())), Intent::Move(Vector2::new(-1.0, -1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(-1.0, 1.0).normalized())), Intent::Move(Vector2::new(-1.0, 1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(1.0, -1.0).normalized())), Intent::Move(Vector2::new(1.0, -1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Move(Vector2::new(1.0, 1.0).normalized())), Intent::Move(Vector2::new(1.0, 1.0).normalized()));
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Move(Vector2::new(0.0, 1.0)), &mut nodes,(player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Move(Vector2::new(0.0, -1.0)), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Move(Vector2::new(-1.0, 0.0)), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Move(Vector2::new(1.0, 0.0)), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Move(Vector2::new(-1.0, -1.0).normalized()), &mut nodes,(player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Move(Vector2::new(-1.0, 1.0).normalized()), &mut nodes,(player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Move(Vector2::new(1.0, -1.0).normalized()), &mut nodes,(player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Move(Vector2::new(1.0, 1.0).normalized()), &mut nodes,(player.score + 1) as i64);
 
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(0.0, 1.0))), Intent::Dash(Vector2::new(0.0, 1.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(0.0, -1.0))), Intent::Dash(Vector2::new(0.0, -1.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(-1.0, 0.0))), Intent::Dash(Vector2::new(-1.0, 0.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(1.0, 0.0))), Intent::Dash(Vector2::new(1.0, 0.0)));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(-1.0, -1.0).normalized())), Intent::Dash(Vector2::new(-1.0, -1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(-1.0, 1.0).normalized())), Intent::Dash(Vector2::new(-1.0, 1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(1.0, -1.0).normalized())), Intent::Dash(Vector2::new(1.0, -1.0).normalized()));
-                    run_simulation_dji(&mut prev, &engine, &mut new_game_engine, &side, (0,player.score, Intent::Dash(Vector2::new(1.0, 1.0).normalized())), Intent::Dash(Vector2::new(1.0, 1.0).normalized()));
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Dash(Vector2::new(0.0, 1.0)), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Dash(Vector2::new(0.0, -1.0)), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, 0.0)), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Dash(Vector2::new(1.0, 0.0)), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, -1.0).normalized()), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Dash(Vector2::new(-1.0, 1.0).normalized()), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Dash(Vector2::new(1.0, -1.0).normalized()), &mut nodes, (player.score + 1) as i64);
+                    run_simulation(&engine, &mut new_engine, &side, Intent::Dash(Vector2::new(1.0, 1.0).normalized()), &mut nodes, (player.score + 1) as i64);
                 }
             }
         };
 
-        prev.2
+        let best : Vec<Node> = get_best(&nodes);
+        let mut cost = best[0].cost;
+        let mut intent = best[0].first_intent;
+        let mut rng = ::rand::thread_rng();
+        for i in best.iter() {
+            println!("Getting best intent");
+            println!("intent : {:?}", i.first_intent);
+            if i.cost < cost {
+                cost = i.cost;
+                intent = i.first_intent;
+            }
+            if i.cost == cost && rng.gen_range(1, 100) > 50 {
+                cost = i.cost;
+                intent = i.first_intent;
+            }
+        }
+
+        intent
+        //prev.2
     }
 }
 
