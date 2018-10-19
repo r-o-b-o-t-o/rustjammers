@@ -9,7 +9,11 @@ authors = [
 
 [lib]
 name = "rustjammers_engine"
-crate-type = ["dylib"]
+crate-type = ["rlib", "dylib"]
+
+[[bin]]
+name = "generate_qvalues"
+path = "src/generate_qvalues.rs"
 
 [dependencies]
 rand = "0.5.5"
