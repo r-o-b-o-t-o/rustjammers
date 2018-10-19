@@ -95,6 +95,9 @@ fn main() {
     let encoded = bincode::serialize(&engine.q_values).expect("Could not encode Q-Values to binary");
     let mut path = ::std::env::current_dir().unwrap();
     path.push(::std::path::PathBuf::from("Unity"));
+    if !path.exists() {
+        path = ::std::env::current_dir().unwrap();
+    }
     path.push(::std::path::PathBuf::from("q_values.bin"));
     std::fs::write(path.clone(), encoded).expect("Unable to write Q-values.");
 
