@@ -730,10 +730,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78322258900342f1914b976933c93c97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nbFrames1: 0
-  nbFrames2: 0
-  nbSim1: 0
-  nbSim2: 0
+  nbFrames1: 1000
+  nbFrames2: 1000
+  nbSim1: 3
+  nbSim2: 3
   turbo: 0
   Types: 0000000000000000
 --- !u!1 &318717005
