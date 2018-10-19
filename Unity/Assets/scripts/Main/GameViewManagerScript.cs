@@ -105,9 +105,7 @@ namespace Main
 			this.currentGameEngine = initialize();
 			reset(this.currentGameEngine);
 			this.mState = new ManagedState();
-			
-			Debug.Log("P1: "+AgentTypeScript.Instance.nbFrames1+","+AgentTypeScript.Instance.nbSim1);
-			Debug.Log("P1: "+AgentTypeScript.Instance.nbFrames2+","+AgentTypeScript.Instance.nbSim2);
+		
 			send_type_p1(this.currentGameEngine, (sbyte) this.agentTypeManager.Types[0], AgentTypeScript.Instance.nbFrames1, AgentTypeScript.Instance.nbSim1);
 			send_type_p2(this.currentGameEngine, (sbyte) this.agentTypeManager.Types[1], AgentTypeScript.Instance.nbFrames2, AgentTypeScript.Instance.nbSim2);
 		}
@@ -239,6 +237,11 @@ namespace Main
 					{
 						this.endScreenManager.SetScore((int) this.mState.p1_score, (int) this.mState.p2_score);
 						block = true;
+					}
+					Debug.Log(mState.p1_score+"/"+mState.p2_score);
+					if (AgentTypeScript.Instance.turbo)
+					{
+						PlayAgain();
 					}
 				}
 			}

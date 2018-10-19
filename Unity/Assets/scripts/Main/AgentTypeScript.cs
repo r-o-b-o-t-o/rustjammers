@@ -20,6 +20,7 @@ namespace Main
 		public int nbFrames2=1000;
 		public int nbSim1=3;
 		public int nbSim2=3;
+		public bool turbo;
 		
 		[HideInInspector]
 		public AgentType[] Types;
@@ -33,6 +34,7 @@ namespace Main
 			nbFrames2=1000;
 			nbSim1=3;
 			nbSim2=3;
+			turbo = false;
 		}
 	}
 }

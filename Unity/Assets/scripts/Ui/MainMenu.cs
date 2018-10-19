@@ -103,7 +103,18 @@ namespace Ui
 			}
 			SceneManager.LoadSceneAsync(this.gameScene, LoadSceneMode.Single);
 		}
-
+		
+		public void OnTurboButtonClicked()
+		{
+			
+			for (var i = 0; i < this.agentDropdowns.Length; i++)
+			{
+				this.agentTypeManager.Types[i] = (AgentTypeScript.AgentType) this.agentDropdowns[i].value;
+			}
+			SceneManager.LoadSceneAsync(this.gameScene, LoadSceneMode.Single);
+			AgentTypeScript.Instance.turbo = true;
+		}
+		
 		public void OnP1AgentTypeChanged(Int32 val)
 		{
 			var human = val == (Int32) AgentTypeScript.AgentType.Human;
