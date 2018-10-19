@@ -340,7 +340,7 @@ pub fn get_best(nodes: &Vec<Node>) -> Vec<Node> {
 fn simulation_dij(engine: &mut GameEngine, side: &PlayerSide, intent: Intent, nodes: &mut Vec<Node>, score:  i64, cost: i64) {
     
 
-    if cost >= 10000 || engine.state_of_game != StateOfGame::Playing {return;}
+    if cost >= 1000000000000 || engine.state_of_game != StateOfGame::Playing {return;}
     let intents = match *side {
         PlayerSide::Left => (intent, Intent::None),
         PlayerSide::Right => (Intent::None, intent),
