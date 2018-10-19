@@ -28,6 +28,7 @@ namespace Ui
 		[SerializeField] private GameViewManagerScript gameViewManager;
 		[SerializeField] private GameObject ui;
 		[SerializeField] private string mainMenuScene;
+		public bool isActived = false;
 
 		private void SetScoreForPlayer(int index, int score, string state)
 		{
@@ -71,11 +72,13 @@ namespace Ui
 
 		public void Enable()
 		{
+			isActived = true;
 			this.ui.SetActive(true);
 		}
 
 		public void Disable()
 		{
+			isActived = false;
 			this.ui.SetActive(false);
 		}
 	}

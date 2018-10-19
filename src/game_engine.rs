@@ -125,12 +125,12 @@ impl GameEngine {
         new_game_engine.state_of_game = self.state_of_game;
     }
 
-    fn create_agent_from_type(agent_type: AgentType) -> Box<Agent> {
-        // Author: Created by Yohann / Edited by Axel
+    fn create_agent_from_type(agent_type: AgentType, frames: f64, sim: i8) -> Box<Agent> {
+        // Author: Created by Yohann / Edited by all
         match agent_type {
             AgentType::Random =>           Box::new(RandomAgent {}),
             AgentType::HumanPlayer =>      Box::new(HumanPlayerAgent {}),
-            AgentType::RandomRollout =>    Box::new(RandomRolloutAgent {}),
+            AgentType::RandomRollout =>    Box::new(RandomRolloutAgent {frames: frames,sim: sim}),
             AgentType::Dijkstra =>         Box::new(DijkstraAgent {}),
             AgentType::TabularQLearning => Box::new(TabularQLearningAgent {}),
             AgentType::None =>             panic!("Invalid agent type."),
@@ -169,20 +169,20 @@ impl GameEngine {
     }
 
     #[no_mangle]
-    pub extern fn send_type_p1(&mut self, agent_type: i8) {
-        // Author: Created by Yohann
+    pub extern fn send_type_p1(&mut self, agent_type: i8, frames: f64, sim: i8) {
+        // Author: Created by Yohann / Edited by all
         let t = ::agent::agent_type_from_i8(agent_type);
-        self.agents.0 = Some(Self::create_agent_from_type(t));
+        self.agents.0 = Some(Self::create_agent_from_type(t, frames, sim));
         if t == AgentType::TabularQLearning {
             self.load_q_values();
         }
     }
 
     #[no_mangle]
-    pub extern fn send_type_p2(&mut self, agent_type: i8) {
-        // Author: Created by Yohann
+    pub extern fn send_type_p2(&mut self, agent_type: i8, frames: f64, sim: i8) {
+        // Author: Created by Yohann / Edited by all
         let t = ::agent::agent_type_from_i8(agent_type);
-        self.agents.1 = Some(Self::create_agent_from_type(t));
+        self.agents.1 = Some(Self::create_agent_from_type(t, frames, sim));
         if t == AgentType::TabularQLearning {
             self.load_q_values();
         }
@@ -194,9 +194,6 @@ impl GameEngine {
         }
         use ::std::fs::File;
         use ::std::io::BufReader;
-
-        //let br = BufReader::new(File::open("q_values.bin").expect("Could not open the Q-values file."));
-        //self.q_values = ::bincode::deserialize_from(br).unwrap();
 
         let f = match File::open("q_values.bin") {
             Ok(f) => f,

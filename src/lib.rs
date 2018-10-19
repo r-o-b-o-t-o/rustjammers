@@ -12,26 +12,6 @@ mod shared_data;
 pub mod game_engine;
 
 #[test]
-fn discretize_pos_x() {
-    fn discretize(val: f64, min: i64, max: i64, scale: f64) -> u32 {
-        let min = min as f64 * scale;
-        let max = max as f64 * scale;
-        let val = val * scale;
-        let amplitude = (max - min + 1.0) as u32;
-        ((val.round() + min.abs()) as u32) % amplitude
-    }
-    println!("{}", discretize(-1.74, -2, 2, 10.0));
-    assert!(true);
-}
-
-#[test]
-fn light_up_vector() {
-    let v = vector2::Vector2::new(-2.0, 1.0).normalized();
-    println!("{:?}", v);
-    assert!(true);
-}
-
-#[test]
 fn run_q_learning() {
     fn max(arr: &[f32; ::agent::QVALUES_ACTIONS]) -> f32 {
         let mut max = std::f32::MIN;
@@ -66,9 +46,9 @@ fn run_q_learning() {
     let max_explo_rate: f32 = 1.0;
     let explo_decay_rate: f32 = 0.005;
 
-    engine.send_type_p1(agent::AgentType::TabularQLearning as i8);
+    engine.send_type_p1(agent::AgentType::TabularQLearning as i8, 0.0, 0);
     //engine.send_type_p2(agent::AgentType::TabularQLearning as i8);
-    engine.send_type_p2(agent::AgentType::Random as i8);
+    engine.send_type_p2(agent::AgentType::Random as i8, 0.0, 0);
 
     println!("Initializing table...");
     engine.q_values = agent::get_blank_q_values();
@@ -112,4 +92,25 @@ fn run_q_learning() {
     std::fs::write(path.clone(), encoded).expect("Unable to write Q-values.");
 
     println!("Done!\r\nSaved Q-values to \"{}\".", path.display());
+}
+
+#[test]
+fn test_dijkstra() {
+    let mut test = game_engine::GameEngine::new();
+    let mut step: i64 = 0;
+    test.reset();
+    test.send_type_p1(agent::AgentType::HumanPlayer as i8, 1000.0, 3);
+    test.send_type_p2(agent::AgentType::Dijkstra as i8, 1000.0, 3);
+    loop {
+
+        println!("STEP: {}", step.to_string());
+        test.epoch(agent::HumanIntent::IDLE, agent::HumanIntent::IDLE);
+
+        if test.state_of_game == game_engine::StateOfGame::End {
+            break;
+        }
+        step+=1;
+
+
+    }
 }
