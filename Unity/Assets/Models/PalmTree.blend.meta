@@ -1,48 +1,95 @@
 fileFormatVersion: 2
-guid: 7da03c74afcbc7d4285bde9aefc00579
-timeCreated: 1539738360
+guid: 929ef170ca0d400478d6fdb154c9e394
+timeCreated: 1540034088
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: Joint
-    100002: //RootNode
-    400000: Joint
-    400002: //RootNode
-    2300000: Joint
-    2300002: //RootNode
-    3300000: Joint
-    3300002: //RootNode
-    4300000: Cylinder
-    4300002: Joint
+    100000: Leaf
+    100002: Leaf_001
+    100004: Leaf_002
+    100006: Leaf_003
+    100008: Leaf_004
+    100010: Leaf_005
+    100012: Leaf_006
+    100014: Leaf_007
+    100016: Leaf_008
+    100018: Leaf_009
+    100020: Leaf_010
+    100022: Leaf_011
+    100024: Leaf_012
+    100026: Leaf_013
+    100028: //RootNode
+    400000: Leaf
+    400002: Leaf_001
+    400004: Leaf_002
+    400006: Leaf_003
+    400008: Leaf_004
+    400010: Leaf_005
+    400012: Leaf_006
+    400014: Leaf_007
+    400016: Leaf_008
+    400018: Leaf_009
+    400020: Leaf_010
+    400022: Leaf_011
+    400024: Leaf_012
+    400026: Leaf_013
+    400028: //RootNode
+    2100000: Trunk
+    2100002: Leaf
+    2300000: Leaf
+    2300002: Leaf_001
+    2300004: Leaf_002
+    2300006: Leaf_003
+    2300008: Leaf_004
+    2300010: Leaf_005
+    2300012: Leaf_006
+    2300014: Leaf_007
+    2300016: Leaf_008
+    2300018: Leaf_009
+    2300020: Leaf_010
+    2300022: Leaf_011
+    2300024: Leaf_012
+    2300026: Leaf_013
+    2300028: //RootNode
+    3300000: Leaf
+    3300002: Leaf_001
+    3300004: Leaf_002
+    3300006: Leaf_003
+    3300008: Leaf_004
+    3300010: Leaf_005
+    3300012: Leaf_006
+    3300014: Leaf_007
+    3300016: Leaf_008
+    3300018: Leaf_009
+    3300020: Leaf_010
+    3300022: Leaf_011
+    3300024: Leaf_012
+    3300026: Leaf_013
+    3300028: //RootNode
+    4300000: Trunk
+    4300002: Leaf
+    4300004: Leaf_001
+    4300006: Leaf_002
+    4300008: Leaf_003
+    4300010: Leaf_004
+    4300012: Leaf_005
+    4300014: Leaf_006
+    4300016: Leaf_007
+    4300018: Leaf_008
+    4300020: Leaf_009
+    4300022: Leaf_010
+    4300024: Leaf_011
+    4300026: Leaf_012
+    4300028: Leaf_013
     7400000: Default Take
     9500000: //RootNode
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Pipe
-    second: {fileID: 2100000, guid: 654de69a35866884cbd3978afa061cfc, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PipeJoint
-    second: {fileID: 2100000, guid: 5e6eabc46acd0dc4e9a651d017e62780, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PipeJoint_001
-    second: {fileID: 2100000, guid: 5e6eabc46acd0dc4e9a651d017e62780, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Pipe_001
-    second: {fileID: 2100000, guid: 654de69a35866884cbd3978afa061cfc, type: 2}
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
-    materialLocation: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -70,10 +117,10 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    importVisibility: 1
+    importVisibility: 0
     importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -92,7 +139,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2

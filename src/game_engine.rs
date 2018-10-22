@@ -488,6 +488,25 @@ impl GameEngine {
             amplitudes.push(amplitude);
         }
 
+        fn discretize_frisbee_direction(v: Vector2) -> f64 {
+            fn angle(v: Vector2) -> f64 {
+                (v.y / v.x.abs()).sin().to_degrees()
+            }
+
+            let a = angle(v);
+            if a > 40.0 {
+                0.0
+            } else if a > 10.0 {
+                1.0
+            } else if a < 10.0 && a > -10.0 {
+                2.0
+            } else if a < -10.0 && a > -40.0 {
+                3.0
+            } else {
+                4.0
+            }
+        }
+
         let mut val = 0;
         let mut max_value = 0;
         let mut amplitudes: Vec<u32> = Vec::new();
@@ -512,7 +531,7 @@ impl GameEngine {
         //}, 0, 2, 1.0, &mut amplitudes, &mut max_value);
         }, 0, 1, 1.0, &mut amplitudes, &mut max_value);
 
-        set_state(&mut val, match self.frisbee.held_by_player {
+        /*set_state(&mut val, match self.frisbee.held_by_player {
             Some(side) => match side {
                 PlayerSide::Left => 1.0,
                 //PlayerSide::Right => 2.0,
@@ -520,10 +539,9 @@ impl GameEngine {
             },
             None => 0.0
         //}, 0, 2, 1.0, &mut amplitudes, &mut max_value);
-        }, 0, 1, 1.0, &mut amplitudes, &mut max_value);
+        }, 0, 1, 1.0, &mut amplitudes, &mut max_value);*/
 
-        /*set_state(&mut val, self.frisbee.direction.x, -1, 1, 1.5, &mut amplitudes, &mut max_value);
-        set_state(&mut val, self.frisbee.direction.y, -1, 1, 1.5, &mut amplitudes, &mut max_value);*/
+        set_state(&mut val, discretize_frisbee_direction(self.frisbee.direction), 0, 4, 1.0, &mut amplitudes, &mut max_value);
 
         //println!("Max value: {}", max_value);
 

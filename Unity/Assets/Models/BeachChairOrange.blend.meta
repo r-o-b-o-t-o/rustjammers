@@ -1,43 +1,73 @@
 fileFormatVersion: 2
-guid: 7da03c74afcbc7d4285bde9aefc00579
-timeCreated: 1539738360
+guid: 90f7ed731c79b4d438a354ba02ca02d5
+timeCreated: 1540048222
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: Joint
+    100000: Base
     100002: //RootNode
-    400000: Joint
+    100004: Bottom
+    100006: Fabric
+    100008: Left
+    100010: Link
+    100012: Right
+    100014: Seat
+    100016: Support
+    100018: Top
+    400000: Base
     400002: //RootNode
-    2300000: Joint
-    2300002: //RootNode
-    3300000: Joint
-    3300002: //RootNode
-    4300000: Cylinder
-    4300002: Joint
+    400004: Bottom
+    400006: Fabric
+    400008: Left
+    400010: Link
+    400012: Right
+    400014: Seat
+    400016: Support
+    400018: Top
+    2100000: unnamed
+    2100002: Bamboo
+    2100004: Fabric
+    2300000: Base
+    2300002: Bottom
+    2300004: Fabric
+    2300006: Left
+    2300008: Link
+    2300010: Right
+    2300012: Seat
+    2300014: Support
+    2300016: Top
+    3300000: Base
+    3300002: Bottom
+    3300004: Fabric
+    3300006: Left
+    3300008: Link
+    3300010: Right
+    3300012: Seat
+    3300014: Support
+    3300016: Top
+    4300000: Base
+    4300002: Bottom
+    4300004: Top
+    4300006: Seat
+    4300008: Fabric
+    4300010: Left
+    4300012: Right
+    4300014: Support
+    4300016: Link
     7400000: Default Take
     9500000: //RootNode
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Pipe
-    second: {fileID: 2100000, guid: 654de69a35866884cbd3978afa061cfc, type: 2}
+      name: Bamboo
+    second: {fileID: 2100000, guid: 92ac441b7c979b841bd1a58d36ff6fd7, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: PipeJoint
-    second: {fileID: 2100000, guid: 5e6eabc46acd0dc4e9a651d017e62780, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PipeJoint_001
-    second: {fileID: 2100000, guid: 5e6eabc46acd0dc4e9a651d017e62780, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Pipe_001
-    second: {fileID: 2100000, guid: 654de69a35866884cbd3978afa061cfc, type: 2}
+      name: Fabric
+    second: {fileID: 2100000, guid: 867034dc6a6a81849b86e3151c71398b, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -67,13 +97,13 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.5
     meshCompression: 0
     addColliders: 0
-    importVisibility: 1
+    importVisibility: 0
     importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -92,7 +122,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2

@@ -18,4 +18,4 @@ path = "src/generate_qvalues.rs"
 [dependencies]
 rand = "0.5.5"
 bitflags = "1.0.4"
-bincode = { version = "1.0.1", features = [ "i128" ] }
+bincode = "1.0.1"

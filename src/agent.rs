@@ -579,7 +579,7 @@ impl Agent for TabularQLearningAgent {
 }
 
 pub fn get_blank_q_values() -> QValues {
-    let size: u64 = 82763; // This is the `max_value` printed from GameEngine::hash()
+    let size: u64 = 206909; // This is the `max_value` printed from GameEngine::hash()
     let mut map = QValues::with_capacity(size as usize);
 
     for i in 0..size {

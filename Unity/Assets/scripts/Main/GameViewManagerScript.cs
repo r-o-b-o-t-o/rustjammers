@@ -216,7 +216,7 @@ namespace Main
 				if (!this.frisbeeHeld)
 				{
 					this.frisbeeTransform.position =
-						new Vector3((float) this.mState.zbee_x, this.p2Transform.position.y, (float) this.mState.zbee_y);
+						new Vector3((float) this.mState.zbee_x, 1.3f, (float) this.mState.zbee_y);
 				}
 				if (this.mState.State != (sbyte) StateOfGame.End && mState.time>1.0 )
 				{
@@ -238,7 +238,6 @@ namespace Main
 						this.endScreenManager.SetScore((int) this.mState.p1_score, (int) this.mState.p2_score);
 						block = true;
 					}
-					Debug.Log(mState.p1_score+"/"+mState.p2_score);
 					if (AgentTypeScript.Instance.turbo)
 					{
 						PlayAgain();

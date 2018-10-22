@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Main;
 using TMPro;
 using UnityEngine;
@@ -20,17 +21,14 @@ namespace Ui
 
 		private void Start()
 		{
-			var list = new List<TMP_Dropdown.OptionData>();
 			var names = Enum.GetNames(typeof(AgentTypeScript.AgentType));
-			foreach (var n in names)
-			{
-				list.Add(new TMP_Dropdown.OptionData(n));
-			}
+			var list = (from n in names where n != AgentTypeScript.AgentType.QLearning.ToString() select new TMP_Dropdown.OptionData(n)).ToList();
 			foreach (var dropdown in this.agentDropdowns)
 			{
-				dropdown.options = list;
+				dropdown.options = new List<TMP_Dropdown.OptionData>(list);
 				dropdown.onValueChanged.Invoke(dropdown.value); // Forces OnPxAgentTypeChanged to run at startup
 			}
+			this.agentDropdowns[0].options.Add(new TMP_Dropdown.OptionData(AgentTypeScript.AgentType.QLearning.ToString()));
 		}
 
 		public void onP1NbFrameChanged()

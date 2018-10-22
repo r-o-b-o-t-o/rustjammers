@@ -4,45 +4,83 @@ extern crate bincode;
 use rustjammers_engine::agent;
 use rustjammers_engine::game_engine;
 
+fn max(arr: &[f32; agent::QVALUES_ACTIONS]) -> f32 {
+    let mut max = std::f32::MIN;
+    for x in arr {
+        if max < *x {
+            max = *x;
+        }
+    }
+    max
+}
+
+fn progress_bar(count: i32, total: i32, text_current: &str, text_total: &str) {
+    let bar_len = 30;
+    let filled_len = (bar_len as f64 * count as f64 / (total as f64)).round() as i32;
+
+    let percents = (100.0 * count as f64 / total as f64).round();
+    let mut bar = "=".repeat(filled_len as usize);
+    bar.push_str(&" ".repeat((bar_len - filled_len) as usize));
+
+    print!("\r[{}] {}% ({} / {}) ", bar, percents, text_current, text_total);
+
+    if count >= total {
+        println!("");
+    }
+}
+
+fn seconds_to_string(mut seconds: u64) -> String {
+    let hours = seconds / 3600;
+    seconds -= hours * 3600;
+    let minutes = seconds / 60;
+    seconds -= minutes * 60;
+
+    let mut res = String::from("");
+    if hours > 0 {
+        res = format!("{:02}:", hours);
+    }
+    res.push_str(&format!("{:02}:{:02}", minutes, seconds));
+    res
+}
+
+enum RunMode {
+    Iterations,
+    Time,
+}
+
 fn main() {
-    fn max(arr: &[f32; agent::QVALUES_ACTIONS]) -> f32 {
-        let mut max = std::f32::MIN;
-        for x in arr {
-            if max < *x {
-                max = *x;
-            }
-        }
-        max
-    }
-
-    fn progress_bar(count: i32, total: i32) {
-        let bar_len = 30;
-        let filled_len = (bar_len as f64 * count as f64 / (total as f64)).round() as i32;
-
-        let percents = (100.0 * count as f64 / total as f64).round();
-        let mut bar = "=".repeat(filled_len as usize);
-        bar.push_str(&" ".repeat((bar_len - filled_len) as usize));
-
-        print!("\r[{}] {}% ({} / {}) ", bar, percents, count, total);
-
-        if count >= total {
-            println!("");
-        }
-    }
-
+    let mut run_mode = RunMode::Iterations;
     let mut n = 50_000;
+    let mut duration_seconds: u64 = 0;
+    let start_time = std::time::Instant::now();
     if let Some(arg) = std::env::args().nth(1) {
-        match arg.parse() {
-            Ok(arg) => n = arg,
-            Err(_) => {
-                eprintln!("Could not parse the number of simulations.");
+        if arg.contains(':') {
+            run_mode = RunMode::Time;
+            let mut split: Vec<&str> = arg.split(':').collect();
+            split.reverse();
+            if split.len() > 0 {
+                duration_seconds += split[0].parse::<u64>().unwrap();
+            }
+            if split.len() > 1 {
+                duration_seconds += split[1].parse::<u64>().unwrap() * 60;
+            }
+            if split.len() > 2 {
+                duration_seconds += split[2].parse::<u64>().unwrap() * 60 * 60;
+            }
+        } else {
+            run_mode = RunMode::Iterations;
+            match arg.parse() {
+                Ok(arg) => n = arg,
+                Err(_) => {
+                    eprintln!("Could not parse the number of simulations.");
+                    std::process::exit(1);
+                }
+            };
+            if n <= 0 {
+                eprintln!("Incorrect number of simulations.");
                 std::process::exit(1);
             }
-        };
-    }
-    if n <= 0 {
-        eprintln!("Incorrect number of simulations.");
-        std::process::exit(1);
+        }
     }
 
     let mut engine = game_engine::GameEngine::new();
@@ -51,7 +89,7 @@ fn main() {
 
     let min_explo_rate: f32 = 0.05;
     let max_explo_rate: f32 = 1.0;
-    let explo_decay_rate: f32 = 0.005;
+    let explo_decay_rate: f32 = 0.0025;
 
     engine.send_type_p1(agent::AgentType::TabularQLearning as i8, 0.0, 0);
     //engine.send_type_p2(agent::AgentType::TabularQLearning as i8);
@@ -61,9 +99,22 @@ fn main() {
     engine.q_values = agent::get_blank_q_values();
     engine.explo_rate = 1.0;
 
-    println!("Running {} simulations...", n);
-    progress_bar(0, n);
-    for i in 0..n {
+    println!("Starting simulations...");
+    let mut i = 0;
+    loop {
+        match run_mode {
+            RunMode::Iterations => {
+                if i >= n {
+                    break;
+                }
+            },
+            RunMode::Time => {
+                if start_time.elapsed().as_secs() >= duration_seconds {
+                    break;
+                }
+            }
+        };
+
         engine.reset();
         while engine.state_of_game != game_engine::StateOfGame::End {
             let state = engine.hash();
@@ -87,8 +138,18 @@ fn main() {
         // Update exploration rate
         engine.explo_rate = min_explo_rate + (max_explo_rate - min_explo_rate) * (-explo_decay_rate * i as f32).exp();
 
-        progress_bar(i + 1, n);
+        i += 1;
+
+        match run_mode {
+            RunMode::Iterations => progress_bar(i, n, &format!("{}", i), &format!("{}", n)),
+            RunMode::Time => {
+                let secs = start_time.elapsed().as_secs();
+                progress_bar(secs as i32, duration_seconds as i32, &seconds_to_string(secs), &seconds_to_string(duration_seconds))
+            },
+        };
     }
+
+    println!("Ran {} simulations.", i);
 
     // Save Q-Values
     println!("Saving Q-values...");

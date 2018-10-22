@@ -31,3 +31,34 @@ fn test_dijkstra() {
 
     }
 }
+
+#[test]
+fn discretize_frisbee_direction() {
+    use vector2::Vector2;
+
+    fn do_it(v: Vector2) -> u32 {
+        fn angle(v: Vector2) -> f64 {
+            (v.y / v.x.abs()).sin().to_degrees()
+        }
+
+        let a = angle(v);
+        if a > 40.0 {
+            0
+        } else if a > 10.0 {
+            1
+        } else if a < 10.0 && a > -10.0 {
+            2
+        } else if a < -10.0 && a > -40.0 {
+            3
+        } else {
+            4
+        }
+    }
+
+    let horizontal = 1.0;
+    println!("{:?}", do_it(Vector2::new(horizontal, 1.0).normalized()));
+    println!("{:?}", do_it(Vector2::new(2.0 * horizontal, 1.0).normalized()));
+    println!("{:?}", do_it(Vector2::new(horizontal, 0.0).normalized()));
+    println!("{:?}", do_it(Vector2::new(2.0 * horizontal, -1.0).normalized()));
+    println!("{:?}", do_it(Vector2::new(horizontal, -1.0).normalized()));
+}
