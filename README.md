@@ -1,6 +1,6 @@
 # Rustjammers
 
-Rustjammers is a [Windjammers](https://en.wikipedia.org/wiki/Windjammers_(video_game)) clone with basic IA agents.
+Rustjammers is a [Windjammers](https://en.wikipedia.org/wiki/Windjammers_(video_game)) clone with basic AI agents.
 
 ## Installing
 
