@@ -13,7 +13,6 @@ pub const INITIAL_FRISBEE_SPEED: f64 = 2.5;
 pub const PLAYER_DASH_POWER: f64     = 2.5;
 
 pub struct GameEngine {
-    // Author: Created by Axel / Edited by all
     pub players:       (Player, Player),
     pub agents:        (Option<Box<Agent>>, Option<Box<Agent>>),
     pub frisbee:       Frisbee,
@@ -31,19 +30,16 @@ pub struct GameEngine {
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum StateOfGame {
-    // Author: Created by Esteban
     Start,
     Playing,
     End,
 }
 
 pub fn state_to_i8(state: &StateOfGame) -> i8 {
-    // Author: Created by Esteban
     *state as i8
 }
 
 pub fn state_from_i8(state: i8) -> StateOfGame {
-    // Author: Created by Esteban
     match state {
         0 => StateOfGame::Start,
         1 => StateOfGame::Playing,
@@ -54,7 +50,6 @@ pub fn state_from_i8(state: i8) -> StateOfGame {
 impl GameEngine {
     #[no_mangle]
     pub extern fn initialize() -> *mut Self {
-        // Author: Created by Axel
         let boxed = Box::new(Self::new());
         Box::into_raw(boxed)
     }
@@ -78,14 +73,12 @@ impl GameEngine {
 
     #[no_mangle]
     pub unsafe extern fn dispose(ptr: *mut Self) {
-        // Author: Created by Axel
         if !ptr.is_null() {
             let _state: Box<Self> = Box::from_raw(ptr);
         }
     }
 
     pub fn new() -> Self {
-        // Author: Created by Axel / Edited by all
         Self {
             players: (
                 Player::new(),
@@ -112,7 +105,6 @@ impl GameEngine {
     }
 
     pub fn copy_in(&self, new_game_engine: &mut GameEngine) {
-        // Author: Created by Yohann / Edited by all
         new_game_engine.players = self.players;
         new_game_engine.agents = (
             Some(Box::new(RandomAgent {})),
@@ -126,7 +118,6 @@ impl GameEngine {
     }
 
     fn create_agent_from_type(agent_type: AgentType, frames: f64, sim: i8) -> Box<Agent> {
-        // Author: Created by Yohann / Edited by all
         match agent_type {
             AgentType::Random =>           Box::new(RandomAgent {}),
             AgentType::HumanPlayer =>      Box::new(HumanPlayerAgent {}),
@@ -139,7 +130,6 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn reset(&mut self) {
-        // Author: Created by Yohann / Edited by all
         self.players.0.pos.x = -9.0;
         self.players.0.pos.y = 0.0;
         self.players.0.score = 0;
@@ -170,7 +160,6 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn send_type_p1(&mut self, agent_type: i8, frames: f64, sim: i8) {
-        // Author: Created by Yohann / Edited by all
         let t = ::agent::agent_type_from_i8(agent_type);
         self.agents.0 = Some(Self::create_agent_from_type(t, frames, sim));
         if t == AgentType::TabularQLearning {
@@ -180,7 +169,6 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn send_type_p2(&mut self, agent_type: i8, frames: f64, sim: i8) {
-        // Author: Created by Yohann / Edited by all
         let t = ::agent::agent_type_from_i8(agent_type);
         self.agents.1 = Some(Self::create_agent_from_type(t, frames, sim));
         if t == AgentType::TabularQLearning {
@@ -205,7 +193,6 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn epoch(&mut self, p1_h_action: HumanIntent, p2_h_action: HumanIntent) {
-        // Author: Created by Yohann / Edited by Axel
         let mut a1 = self.agents.0.take().unwrap();
         let mut a2 = self.agents.1.take().unwrap();
 
@@ -236,15 +223,12 @@ impl GameEngine {
 
     #[no_mangle]
     pub extern fn get_state(&mut self) -> SharedData {
-        // Author: Created by Yohann
         let mut data = SharedData::new();
         self.to_shared_data(&mut data);
         data
     }
 
     pub fn step(&mut self, intents: (Intent, Intent)) {
-        // Author: Created by Yohann / Edited by all
-
         // Update timers
         let time_step = 1.0 / 60.0; // Assume we run at 60 frames per second
         self.time -= time_step;
@@ -293,7 +277,6 @@ impl GameEngine {
         }
 
         fn apply_action(player: &mut Player, frisbee: &mut Frisbee, intent: &Intent, state_of_game: &StateOfGame) -> ActionResult {
-            // Author: Created by Axel
             let mut res = ActionResult::None;
 
             match intent {
@@ -445,7 +428,6 @@ impl GameEngine {
     }
 
     pub fn to_shared_data(&self, shared: &mut SharedData) {
-        // Author: Created by Yohann / Edited by all
         shared.p1_x = self.players.0.pos.x;
         shared.p1_y = self.players.0.pos.y;
         shared.p1_score = self.players.0.score;
@@ -466,7 +448,6 @@ impl GameEngine {
     }
 
     pub fn hash(&self) -> u64 {
-        // Author: Created by Axel
         fn set_state(hash: &mut u64, val: f64, min: i64, max: i64, scale: f64, amplitudes: &mut Vec<u32>, max_value: &mut u64) {
             fn discretize(val: f64, min: i64, max: i64, scale: f64) -> (u32, u32) {
                 let min = min as f64 * scale;
@@ -515,35 +496,18 @@ impl GameEngine {
         set_state(&mut val, self.players.0.pos.x, -9, -1, scale, &mut amplitudes, &mut max_value);
         set_state(&mut val, self.players.0.pos.y, -5, 5, scale, &mut amplitudes, &mut max_value);
 
-        /*set_state(&mut val, self.players.1.pos.x, 1, 9, scale, &mut amplitudes, &mut max_value);
-        set_state(&mut val, self.players.1.pos.y, -5, 5, scale, &mut amplitudes, &mut max_value);*/
-
         set_state(&mut val, self.frisbee.pos.x, -9, 9, scale, &mut amplitudes, &mut max_value);
         set_state(&mut val, self.frisbee.pos.y, -5, 5, scale, &mut amplitudes, &mut max_value);
 
         set_state(&mut val, match self.frisbee.last_held {
             Some(side) => match side {
                 PlayerSide::Left => 1.0,
-                //PlayerSide::Right => 2.0,
                 PlayerSide::Right => 0.0,
             },
             None => 0.0
-        //}, 0, 2, 1.0, &mut amplitudes, &mut max_value);
         }, 0, 1, 1.0, &mut amplitudes, &mut max_value);
 
-        /*set_state(&mut val, match self.frisbee.held_by_player {
-            Some(side) => match side {
-                PlayerSide::Left => 1.0,
-                //PlayerSide::Right => 2.0,
-                PlayerSide::Right => 0.0,
-            },
-            None => 0.0
-        //}, 0, 2, 1.0, &mut amplitudes, &mut max_value);
-        }, 0, 1, 1.0, &mut amplitudes, &mut max_value);*/
-
         set_state(&mut val, discretize_frisbee_direction(self.frisbee.direction), 0, 4, 1.0, &mut amplitudes, &mut max_value);
-
-        //println!("Max value: {}", max_value);
 
         val
     }

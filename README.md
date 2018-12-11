@@ -1,18 +1,19 @@
-Version Unity: 2017.3.0f3
+# Rustjammers
 
-Rust stable minimum 1.27
-(penser à build en release pour les performances (`cargo build --release`))
+Rustjammers is a [Windjammers](https://en.wikipedia.org/wiki/Windjammers_(video_game)) clone with basic IA agents.
 
-Scene à lancer au démarrage: `Menu.unity`
+## Installing
 
-Créer un fichier de Q-values pour le tabular Q-learning agent :
+Install [rust](https://www.rust-lang.org/tools/install).
+
+Install [Unity](https://unity3d.com/get-unity/download)
+
+Open a `cmd` window or a terminal and compile the game engine:
 ```sh
-$ cargo run --release --bin generate_qvalues 5000
+cd rustjammers # Go to your copy of this repository
+cargo build --release
 ```
-(Où le 5000 est le nombre de simulations. Si la valeur n'est pas spécifiée, une valeur par défaut sera utilisée.)
 
-| Pseudo GitHub  | Élève          |
-| -------------- | -------------- |
-| Kryod          | Yohann JERRAIN |
-| Elyrioss       | Esteban DUMAS  |
-| robot0         | Axel COCAT     |
+Copy the resulting `rustjammers_engine.dll` library file in `rustjammers/target/release` to `rustjammers/Unity/Assets`.
+
+Open the Unity project and run the game.

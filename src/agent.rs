@@ -18,7 +18,6 @@ pub enum AgentType {
 
 #[derive(Clone, Copy, Debug)]
 pub enum Intent {
-    // Author: Created by Axel
     None,
     Move(Vector2),
     Dash(Vector2),
@@ -26,7 +25,6 @@ pub enum Intent {
 }
 
 fn simulation(engine: &mut GameEngine, side: &PlayerSide, intent: Intent, nb_frames : f64) -> (i8, Intent) {
-    // Author: Created by Yohann / Edited by Esteban
     let intents = match *side {
         PlayerSide::Left => (intent, Intent::None),
         PlayerSide::Right => (Intent::None, intent),
@@ -50,7 +48,6 @@ fn simulation(engine: &mut GameEngine, side: &PlayerSide, intent: Intent, nb_fra
 }
 
 pub fn agent_type_from_i8(side: i8) -> AgentType {
-    // Author: Created by Axel
     match side {
         0 => AgentType::HumanPlayer,
         1 => AgentType::Random,
@@ -62,7 +59,6 @@ pub fn agent_type_from_i8(side: i8) -> AgentType {
 }
 
 pub trait Agent {
-    // Author: Created by Axel
     fn act(&mut self, side: PlayerSide, engine: &mut GameEngine) -> Intent;
     fn get_type(&self) -> AgentType;
 
@@ -79,7 +75,6 @@ pub trait Agent {
 pub struct RandomAgent {}
 
 impl Agent for RandomAgent {
-    // Author: Created by Axel
     fn get_type(&self) -> AgentType {
         AgentType::Random
     }
@@ -122,7 +117,6 @@ pub struct HumanPlayerAgent {}
 
 bitflags! {
     pub struct HumanIntent: u8 {
-        // Author: Created by Axel
         const IDLE  = 0;
         const UP    = 1;
         const DOWN  = 2;
@@ -225,7 +219,6 @@ pub fn human_intent_to_intent(engine: &GameEngine, input: HumanIntent, side: Pla
 }
 
 impl Agent for HumanPlayerAgent {
-    // Author: Created by Yohann / Edited by Axel
     fn get_type(&self) -> AgentType {
         AgentType::HumanPlayer
     }
@@ -241,7 +234,6 @@ impl Agent for HumanPlayerAgent {
 pub struct RandomRolloutAgent {pub frames : f64,pub sim: i8}
 
 impl Agent for RandomRolloutAgent {
-    // Author: Created by Yohann / Edited by all
     fn get_type(&self) -> AgentType {
         AgentType::RandomRollout
     }
@@ -437,7 +429,6 @@ impl Agent for DijkstraAgent {
         engine.copy_in(&mut node_engine);
         let node = Node { engine: node_engine, first_intent: Intent::None, cost: -1, score: player.score as i64 };
         nodes.push(node);
-        //let mut prev = (0, player.score, Intent::None);
 
         fn run_simulation(engine: &GameEngine, new_game_engine: &mut GameEngine, side: &PlayerSide, intent: Intent, nodes: &mut Vec<Node>, score: i64) {
             engine.copy_in(new_game_engine);
@@ -503,7 +494,6 @@ impl Agent for DijkstraAgent {
         }
 
         intent
-        //prev.2
     }
 }
 
@@ -579,7 +569,7 @@ impl Agent for TabularQLearningAgent {
 }
 
 pub fn get_blank_q_values() -> QValues {
-    let size: u64 = 206909; // This is the `max_value` printed from GameEngine::hash()
+    let size: u64 = 206909; // This is the `max_value` from GameEngine::hash()
     let mut map = QValues::with_capacity(size as usize);
 
     for i in 0..size {

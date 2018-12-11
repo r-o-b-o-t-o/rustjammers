@@ -9,7 +9,6 @@ namespace Main
 {
 	public class GameViewManagerScript : MonoBehaviour
 	{
-		// Author: Created by Esteban / Edited by Axel
 		[SerializeField] private Transform p1Transform;
 		[SerializeField] private Transform p1Hands;
 
@@ -31,8 +30,8 @@ namespace Main
 
 		[SerializeField] private PauseScreenManager pauseScreenManager;
 
-		public int nbFrames=1000;
-		public int nbSim=3;
+		public int nbFrames = 1000;
+		public int nbSim = 3;
 		
 		[StructLayout(LayoutKind.Sequential)]
 		private struct ManagedState
@@ -186,10 +185,8 @@ namespace Main
 						this.p2Score.text = "" + this.mState.p2_score;
 					}
 				}
-				this.p1Transform.position =
-					new Vector3((float) this.mState.p1_x, this.p1Transform.position.y, (float) this.mState.p1_y);
-				this.p2Transform.position =
-					new Vector3((float) this.mState.p2_x, this.p2Transform.position.y, (float) this.mState.p2_y);
+				this.p1Transform.position = new Vector3((float) this.mState.p1_x, this.p1Transform.position.y, (float) this.mState.p1_y);
+				this.p2Transform.position = new Vector3((float) this.mState.p2_x, this.p2Transform.position.y, (float) this.mState.p2_y);
 				if (!this.frisbeeHeld)
 				{
 					if (this.mState.zbee_held == 0)
@@ -215,8 +212,7 @@ namespace Main
 				}
 				if (!this.frisbeeHeld)
 				{
-					this.frisbeeTransform.position =
-						new Vector3((float) this.mState.zbee_x, 1.3f, (float) this.mState.zbee_y);
+					this.frisbeeTransform.position = new Vector3((float) this.mState.zbee_x, 1.3f, (float) this.mState.zbee_y);
 				}
 				if (this.mState.State != (sbyte) StateOfGame.End && mState.time>1.0 )
 				{

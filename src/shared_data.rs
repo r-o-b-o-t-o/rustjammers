@@ -3,7 +3,6 @@ use game_engine::GameEngine;
 
 #[repr(C)]
 pub struct SharedData {
-    // Author: Created by Yohann / Edited by all
     pub p1_x:          f64,
     pub p1_y:          f64,
     pub p1_score:      i8,
@@ -24,7 +23,6 @@ pub struct SharedData {
 
 impl SharedData {
     pub fn new() -> Self {
-        // Author: Created by Yohann
         Self {
             p1_x:          0.0,
             p1_y:          0.0,
@@ -47,7 +45,6 @@ impl SharedData {
     }
 
     pub fn to_game_engine(self, engine: &mut GameEngine) {
-        // Author: Created by Yohann / Edited by all
         engine.players.0.pos.x = self.p1_x;
         engine.players.0.pos.y = self.p1_y;
         engine.players.0.score = self.p1_score;

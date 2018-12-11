@@ -9,9 +9,6 @@ namespace Ui
 {
 	public class PauseScreenManager : MonoBehaviour
 	{
-		// Author: Created by Esteban / Edited by Axel
-
-
 		[SerializeField] public TextMeshProUGUI ScoreText1;
 		[SerializeField] public TextMeshProUGUI ScoreText2;
 		[SerializeField] private GameViewManagerScript gameViewManager;

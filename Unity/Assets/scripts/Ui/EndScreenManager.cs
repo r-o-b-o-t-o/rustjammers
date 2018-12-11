@@ -8,7 +8,6 @@ namespace Ui
 {
 	public class EndScreenManager : MonoBehaviour
 	{
-		// Author: Created by Esteban / Edited by Axel
 		[Serializable]
 		public enum WinState
 		{

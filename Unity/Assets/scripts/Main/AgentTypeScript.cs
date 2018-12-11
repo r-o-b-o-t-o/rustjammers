@@ -4,7 +4,6 @@ namespace Main
 {
 	public class AgentTypeScript : MonoBehaviour
 	{
-		// Author: Created by Esteban / Edited by Axel
 		public enum AgentType
 		{
 			Human = 0,
@@ -16,10 +15,10 @@ namespace Main
 
 		public static AgentTypeScript Instance;
 
-		public int nbFrames1=1000;
-		public int nbFrames2=1000;
-		public int nbSim1=3;
-		public int nbSim2=3;
+		public int nbFrames1 = 1000;
+		public int nbFrames2 = 1000;
+		public int nbSim1 = 3;
+		public int nbSim2 = 3;
 		public bool turbo;
 		
 		[HideInInspector]
@@ -30,10 +29,10 @@ namespace Main
 			Instance = this;
 			DontDestroyOnLoad(this.gameObject);
 			this.Types = new AgentType[2];
-			nbFrames1=1000;
-			nbFrames2=1000;
-			nbSim1=3;
-			nbSim2=3;
+			nbFrames1 = 1000;
+			nbFrames2 = 1000;
+			nbSim1 = 3;
+			nbSim2 = 3;
 			turbo = false;
 		}
 	}
