@@ -6,7 +6,7 @@ Rustjammers is a [Windjammers](https://en.wikipedia.org/wiki/Windjammers_(video_
 
 Install [rust](https://www.rust-lang.org/tools/install).
 
-Install [Unity](https://unity3d.com/get-unity/download)
+Install [Unity](https://unity3d.com/get-unity/download).
 
 Open a `cmd` window or a terminal and compile the game engine:
 ```sh
